@@ -9,6 +9,9 @@ var frequencyX = 100, frequencyY = 350;
 var reverbX = 100, reverbY = 500;
 var sliderBallRadius = 10;
 
+//angle for rotating the shape
+var angle = 0;
+
 //BounceCircle variables
 var ellipseR = 25;
 var ellipseX = 300, ellipseY = 400;
@@ -24,6 +27,11 @@ var sliderButtonClicked = true;
 var bounceCircleButtonClicked = false;
 var drawCurveButtonClicked = false;
 
+//determine visualization
+var drawRect = true;
+var drawEllipse = false;
+var drawTriangle = false;
+
 
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
@@ -31,9 +39,11 @@ function preload() {
 }
 
 function setup() {
+    angleMode(DEGREES);
     createCanvas(1500,700);
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
+    fft = new p5.FFT();
     filter = new p5.BandPass();
     reverb = new p5.Reverb();
     sound.disconnect();
@@ -88,6 +98,13 @@ function draw() {
         drawCurve();
     }
 
+    if (drawRect) {
+        drawRect()
+    } else if (drawTriangle) {
+        drawTriangle()
+    } else {
+        drawEllipse()
+    }
 }
 
 //math equations to draw one visualization
@@ -132,6 +149,60 @@ function drawVisualization2(parameter1, parameter2){
         endShape();
     }
 }
+
+function drawEllipse() {
+    translate(width/2, height/2); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1; 
+    let spectrum = fft.analyze()
+    background(0);
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, height);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    ellipse(0, 0 , size, widthFreq)
+    
+  }
+  function drawRect() {
+  
+    rectMode(CENTER)
+    translate(width/2, height/2); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
+    let spectrum = fft.analyze()
+    background(0);
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, height);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    rect(0,0, size, widthFreq)
+    
+  }
+  
+  function drawTriangle() {
+    // translate(width/2, height/2); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1; //can va
+    //can keep the height constant, but then triangle isn't super fun
+    let spectrum = fft.analyze()
+    background(0);
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, height);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    console.log(widthFreq);
+    if (widthFreq != 0) {
+    triangle(300,height/2, width/2, size, width/4,  height/2)
+    } else {
+    triangle(300,height/2, width/2, size, width/4,  height/2)
+    }
+  }
 
 //draw a curve to manipulate sound
 function drawCurve(){
