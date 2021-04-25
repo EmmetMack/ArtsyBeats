@@ -28,9 +28,9 @@ var bounceCircleButtonClicked = false;
 var drawCurveButtonClicked = false;
 
 //determine visualization
-var drawRect = true;
-var drawEllipse = false;
-var drawTriangle = false;
+var drawRectClicked = true;
+var drawEllipseClicked = false;
+var drawTriangleClicked = false;
 
 
 function preload() {
@@ -85,6 +85,24 @@ function draw() {
         drawCurveButtonClicked = true;
     }
 
+    document.getElementById('rectangleButton').onclick = function() {
+        drawRectClicked = true;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+    }
+
+    document.getElementById('ellipseButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = true;
+    }
+
+    document.getElementById('triangleButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = true;
+        drawEllipseClicked = false;
+    }
+
     if (sliderButtonClicked == true){
         drawSliders();
         sound.rate(1);
@@ -98,9 +116,9 @@ function draw() {
         drawCurve();
     }
 
-    if (drawRect) {
+    if (drawRectClicked == true) {
         drawRect()
-    } else if (drawTriangle) {
+    } else if (drawTriangleClicked == true) {
         drawTriangle()
     } else {
         drawEllipse()
@@ -151,14 +169,18 @@ function drawVisualization2(parameter1, parameter2){
 }
 
 function drawEllipse() {
-    translate(width/2, height/2); //set the new origin/point of rotation
+
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
+    translate((startX + rectW/2), (startY + rectH)/2); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + 1; 
     let spectrum = fft.analyze()
     background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, height);
+    let size = map(level, 0, 1, 0, rectH);
     noFill()
     stroke(255,0,0)
     strokeWeight(5)
@@ -166,16 +188,20 @@ function drawEllipse() {
     
   }
   function drawRect() {
-  
+    
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
     rectMode(CENTER)
-    translate(width/2, height/2); //set the new origin/point of rotation
+    
+    translate((startX + rectW)/2, (startY + rectH)/2); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
     background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, height);
+    let size = map(level, 0, 1, 0, rectH);
     noFill()
     stroke(255,0,0)
     strokeWeight(5)
@@ -188,19 +214,21 @@ function drawEllipse() {
     // rotate(angle);
     // angle = angle + 1; //can va
     //can keep the height constant, but then triangle isn't super fun
+
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
     let spectrum = fft.analyze()
     background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, height);
+    let size = map(level, 0, 1, 0, rectH);
     noFill()
     stroke(255,0,0)
     strokeWeight(5)
-    console.log(widthFreq);
     if (widthFreq != 0) {
-    triangle(300,height/2, width/2, size, width/4,  height/2)
+        triangle(startX + 300,(startY + rectH)/2, (startX + rectW)/2, size,  (startX + rectW)/4,  (startY + rectH)/2)
     } else {
-    triangle(300,height/2, width/2, size, width/4,  height/2)
+        triangle(startX + 300,(startY + rectH)/2, (startX + rectW)/2, size, (startX + rectW)/4,  (startY + rectH)/2)
     }
   }
 
