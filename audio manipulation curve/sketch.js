@@ -173,7 +173,7 @@ function drawEllipse() {
     var rectW = 500; rectH = 500;     //canvas width & height
     var startX = 700; startY = 150; 
 
-    translate((startX + rectW/2), (startY + rectH)/2); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + 1; 
     let spectrum = fft.analyze()
@@ -194,7 +194,7 @@ function drawEllipse() {
 
     rectMode(CENTER)
     
-    translate((startX + rectW)/2, (startY + rectH)/2); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
@@ -226,9 +226,9 @@ function drawEllipse() {
     stroke(255,0,0)
     strokeWeight(5)
     if (widthFreq != 0) {
-        triangle(startX + 300,(startY + rectH)/2, (startX + rectW)/2, size,  (startX + rectW)/4,  (startY + rectH)/2)
+        triangle(startX + 300, startY+ (rectH/2), startX + (rectW/2), size,  startX + (rectW/4),  startY + (rectH/2))
     } else {
-        triangle(startX + 300,(startY + rectH)/2, (startX + rectW)/2, size, (startX + rectW)/4,  (startY + rectH)/2)
+        triangle(startX + 300,startY + (rectH/2), startX + (rectW/2), size, startX + (rectW/4),  startY + (rectH/2))
     }
   }
 
