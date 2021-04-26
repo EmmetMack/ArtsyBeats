@@ -31,6 +31,7 @@ var drawCurveButtonClicked = false;
 var drawRectClicked = true;
 var drawEllipseClicked = false;
 var drawTriangleClicked = false;
+var drawVisualizationClicked = false;
 
 
 function preload() {
@@ -89,18 +90,28 @@ function draw() {
         drawRectClicked = true;
         drawTriangleClicked = false;
         drawEllipseClicked = false;
+        drawVisualizationClicked = false;
     }
 
     document.getElementById('ellipseButton').onclick = function() {
         drawRectClicked = false;
         drawTriangleClicked = false;
         drawEllipseClicked = true;
+        drawVisualizationClicked = false;
     }
 
     document.getElementById('triangleButton').onclick = function() {
         drawRectClicked = false;
         drawTriangleClicked = true;
         drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+    }
+
+    document.getElementById('visualizationButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = true;
     }
 
     if (sliderButtonClicked == true){
@@ -120,6 +131,8 @@ function draw() {
         drawRect()
     } else if (drawTriangleClicked == true) {
         drawTriangle()
+    } else if (drawVisualizationClicked == true) {
+        visualizeSliders()
     } else {
         drawEllipse()
     }
@@ -177,7 +190,6 @@ function drawEllipse() {
     rotate(angle);
     angle = angle + 1; 
     let spectrum = fft.analyze()
-    background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
@@ -198,7 +210,6 @@ function drawEllipse() {
     rotate(angle);
     angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
-    background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
@@ -218,7 +229,6 @@ function drawEllipse() {
     var rectW = 500; rectH = 500;     //canvas width & height
     var startX = 700; startY = 150; 
     let spectrum = fft.analyze()
-    background(0);
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
@@ -345,7 +355,7 @@ function drawSliders(){
         changeReverb();
     }
     //visualize
-    visualizeSliders();
+    // visualizeSliders();
 }
 
 //draw visualization corresponding to slider values
