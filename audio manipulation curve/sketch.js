@@ -34,6 +34,7 @@ var drawRectClicked = true;
 var drawEllipseClicked = false;
 var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
+var drawQuadClicked = false;
 
 
 function preload() {
@@ -43,7 +44,8 @@ function preload() {
 
 function setup() {
     angleMode(DEGREES);
-    createCanvas(1500,700);
+    // createCanvas(1500,700);
+    createCanvas(displayWidth, displayHeight);
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
@@ -94,6 +96,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
+        drawQuadClicked = false;
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -101,6 +104,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = true;
         drawVisualizationClicked = false;
+        drawQuadClicked = false;
     }
 
     document.getElementById('triangleButton').onclick = function() {
@@ -108,6 +112,15 @@ function draw() {
         drawTriangleClicked = true;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
+        drawQuadClicked = false;
+    }
+
+    document.getElementById('quadirlateralButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+        drawQuadClicked = true;
     }
 
     document.getElementById('visualizationButton').onclick = function() {
@@ -115,6 +128,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = true;
+        drawQuadClicked = false;
     }
 
     document.getElementById('lineColor').onchange = function() {
@@ -144,8 +158,10 @@ function draw() {
         drawTriangle()
     } else if (drawVisualizationClicked == true) {
         visualizeSliders()
-    } else {
+    } else if (drawEllipseClicked == true) {
         drawEllipse()
+    } else {
+        drawQuad()
     }
 }
 
@@ -252,6 +268,28 @@ function drawEllipse() {
         triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
     } else {
         triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
+    }
+  }
+
+  function drawQuad() {
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
+    // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1; 
+
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, rectH);
+    noFill()
+    stroke(visualizationColor)
+    strokeWeight(5)
+    if (widthFreq != 0) {
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
+    } else {
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )    
     }
   }
 
