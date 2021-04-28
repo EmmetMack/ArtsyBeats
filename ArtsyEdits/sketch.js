@@ -9,6 +9,9 @@ var frequencyX = 100, frequencyY = 350;
 var reverbX = 100, reverbY = 500;
 var sliderBallRadius = 10;
 
+//angle for rotating the shape
+var angle = 0;
+
 //BounceCircle variables
 var ellipseR = 25;
 var ellipseX = 300, ellipseY = 400;
@@ -24,6 +27,12 @@ var sliderButtonClicked = true;
 var bounceCircleButtonClicked = false;
 var drawCurveButtonClicked = false;
 
+//determine visualization
+var drawRectClicked = true;
+var drawEllipseClicked = false;
+var drawTriangleClicked = false;
+var drawVisualizationClicked = false;
+
 
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
@@ -31,9 +40,11 @@ function preload() {
 }
 
 function setup() {
+    angleMode(DEGREES);
     createCanvas(1500,700);
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
+    fft = new p5.FFT();
     filter = new p5.BandPass();
     reverb = new p5.Reverb();
     sound.disconnect();
@@ -75,6 +86,34 @@ function draw() {
         drawCurveButtonClicked = true;
     }
 
+    document.getElementById('rectangleButton').onclick = function() {
+        drawRectClicked = true;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+    }
+
+    document.getElementById('ellipseButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = true;
+        drawVisualizationClicked = false;
+    }
+
+    document.getElementById('triangleButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = true;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+    }
+
+    document.getElementById('visualizationButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = true;
+    }
+
     if (sliderButtonClicked == true){
         drawSliders();
         sound.rate(1);
@@ -88,6 +127,15 @@ function draw() {
         drawCurve();
     }
 
+    if (drawRectClicked == true) {
+        drawRect()
+    } else if (drawTriangleClicked == true) {
+        drawTriangle()
+    } else if (drawVisualizationClicked == true) {
+        visualizeSliders()
+    } else {
+        drawEllipse()
+    }
 }
 
 //math equations to draw one visualization
@@ -132,6 +180,67 @@ function drawVisualization2(parameter1, parameter2){
         endShape();
     }
 }
+
+function drawEllipse() {
+
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1; 
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, rectH);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    ellipse(0, 0 , size, widthFreq)
+    
+  }
+  function drawRect() {
+    
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
+    rectMode(CENTER)
+    
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, rectH);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    rect(0,0, size, widthFreq)
+    
+  }
+  
+  function drawTriangle() {
+    // translate(width/2, height/2); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1; //can va
+    //can keep the height constant, but then triangle isn't super fun
+
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, rectH);
+    noFill()
+    stroke(255,0,0)
+    strokeWeight(5)
+    if (widthFreq != 0) {
+        triangle(startX + 300, startY+ (rectH/2), startX + (rectW/2), size,  startX + (rectW/4),  startY + (rectH/2))
+    } else {
+        triangle(startX + 300,startY + (rectH/2), startX + (rectW/2), size, startX + (rectW/4),  startY + (rectH/2))
+    }
+  }
 
 //draw a curve to manipulate sound
 function drawCurve(){
@@ -246,7 +355,7 @@ function drawSliders(){
         changeReverb();
     }
     //visualize
-    visualizeSliders();
+    // visualizeSliders();
 }
 
 //draw visualization corresponding to slider values
