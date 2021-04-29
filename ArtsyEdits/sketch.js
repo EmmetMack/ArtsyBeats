@@ -9,6 +9,8 @@ var frequencyX = 100, frequencyY = 350;
 var reverbX = 100, reverbY = 500;
 var sliderBallRadius = 10;
 
+var visualizationColor;
+
 //angle for rotating the shape
 var angle = 0;
 
@@ -34,6 +36,7 @@ var drawRectClicked = true;
 var drawEllipseClicked = false;
 var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
+var drawQuadClicked = false;
 
 
 function preload() {
@@ -43,7 +46,8 @@ function preload() {
 
 function setup() {
     angleMode(DEGREES);
-    createCanvas(1500,700);
+    // createCanvas(1500,700);
+    createCanvas(displayWidth, displayHeight);
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
@@ -52,6 +56,11 @@ function setup() {
     sound.disconnect();
     sound.connect(filter);
     reverb.process(sound, 3, 2);
+
+    //load image of diff visualization buttons
+    img = loadImage('assets/button.png');
+    visualizationColor = document.getElementById('lineColor').value
+
 }
 
 function draw() {
@@ -89,6 +98,52 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
+        drawQuadClicked = false;
+    }
+
+    document.getElementById('ellipseButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = true;
+        drawVisualizationClicked = false;
+        drawQuadClicked = false;
+    }
+
+    document.getElementById('triangleButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = true;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+        drawQuadClicked = false;
+    }
+
+    document.getElementById('quadirlateralButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = false;
+        drawQuadClicked = true;
+    }
+
+    document.getElementById('visualizationButton').onclick = function() {
+        drawRectClicked = false;
+        drawTriangleClicked = false;
+        drawEllipseClicked = false;
+        drawVisualizationClicked = true;
+        drawQuadClicked = false;
+    }
+
+    document.getElementById('lineColor').onchange = function() {
+        visualizationColor = document.getElementById('lineColor').value
+    }
+
+    document.getElementById('lineColor').onselect = function() {
+        visualizationColor = document.getElementById('lineColor').value
+    }
+
+    if (sliderButtonClicked == true){
+        drawSliders();
+        sound.rate(1);
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -121,15 +176,16 @@ function draw() {
         drawCurve();
     }
 
-
     if (drawRectClicked == true) {
         drawRect()
     } else if (drawTriangleClicked == true) {
         drawTriangle()
     } else if (drawVisualizationClicked == true) {
         visualizeSliders()
-    } else {
+    } else if (drawEllipseClicked == true) {
         drawEllipse()
+    } else {
+        drawQuad()
     }
 }
 
@@ -140,7 +196,8 @@ function drawVisualization1() {
     var drawLine = map(ampLevel, 0, 0.1, 100, 800);
     //astroid
     beginShape();
-    stroke(163, 214, 245);
+    // stroke(163, 214, 245);
+    stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
     translate(width / 2, height / 2);
@@ -161,7 +218,8 @@ function drawVisualization2(parameter1, parameter2){
 
     //Epicycloid Involute
     beginShape();
-    stroke(242, 194, 203);
+    // stroke(242, 194, 203);
+    stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
@@ -189,7 +247,7 @@ function drawEllipse() {
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
     noFill()
-    stroke(255,0,0)
+    stroke(visualizationColor)
     strokeWeight(5)
     ellipse(0, 0 , size, widthFreq)
     
@@ -209,31 +267,53 @@ function drawEllipse() {
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
     noFill()
-    stroke(255,0,0)
+    stroke(visualizationColor)
     strokeWeight(5)
     rect(0,0, size, widthFreq)
     
   }
   
   function drawTriangle() {
-    // translate(width/2, height/2); //set the new origin/point of rotation
-    // rotate(angle);
-    // angle = angle + 1; //can va
-    //can keep the height constant, but then triangle isn't super fun
-
     var rectW = 500; rectH = 500;     //canvas width & height
     var startX = 700; startY = 150; 
+
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1; 
+
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
     noFill()
-    stroke(255,0,0)
+    stroke(visualizationColor)
     strokeWeight(5)
     if (widthFreq != 0) {
-        triangle(startX + 300, startY+ (rectH/2), startX + (rectW/2), size,  startX + (rectW/4),  startY + (rectH/2))
+        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
     } else {
-        triangle(startX + 300,startY + (rectH/2), startX + (rectW/2), size, startX + (rectW/4),  startY + (rectH/2))
+        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
+    }
+  }
+
+  function drawQuad() {
+    var rectW = 500; rectH = 500;     //canvas width & height
+    var startX = 700; startY = 150; 
+
+    // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1; 
+
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, rectH);
+    noFill()
+    stroke(visualizationColor)
+    strokeWeight(5)
+    if (widthFreq != 0) {
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
+    } else {
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )    
     }
   }
 
@@ -361,7 +441,8 @@ function drawSliders(){
         changeFrequency();
         changeReverb();
     }
-
+    //visualize
+    // visualizeSliders();
 }
 
 //draw visualization corresponding to slider values
