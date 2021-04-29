@@ -4,9 +4,9 @@ var sound, amplitude, frequency, fft;
 var sliderLength = window.innerWidth - 20;
 var sliderStart = 20; sliderStop = window.innerWidth - 20;
     //ball on the slider
-var panX = 20, panY = 200; //check with Kathy what changing this does/how it affects the editing
-var frequencyX = 20, frequencyY = 350;
-var reverbX = 20, reverbY = 500;
+var panX = 20, panY = 75; //check with Kathy what changing this does/how it affects the editing
+var frequencyX = 20, frequencyY = 200;
+var reverbX = 20, reverbY = 350;
 var sliderBallRadius = 10;
 
 //scale everything off displayheight + width
@@ -213,10 +213,10 @@ function drawVisualization1() {
     stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
-    translate(width / 2, height / 2);
+    translate(width / 2, 2*height / 3 + 50);
     for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
-        LimMouseX = constrain(drawLine*2, 0, width);
-        var a = map(LimMouseX, 0, width, 10, 80); //relate to mouseX
+        LimMouseX = constrain(drawLine*2, 0, width-20);
+        var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
         var theta = map(i, 0, drawLine*2, 20, 360);
         var x = 2 * a * cos(theta) + a * cos(2 * theta);
         var y = 2 * a * sin(theta) - a * sin(2 * theta);
@@ -236,8 +236,8 @@ function drawVisualization2(parameter1, parameter2){
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
-        LimMouseX = constrain(parameter1, 0, width);
-        var a = map(LimMouseX, 0, width, 0, 80); //relate to mouseX
+        LimMouseX = constrain(parameter1, 0, width-20);
+        var a = map(LimMouseX, 0, width-20, 0, 60); //relate to mouseX
         var theta = map(i, 0, parameter1/5, 20, 360);
         var b = map(parameter2, 0, height, 0, 50);
         var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
