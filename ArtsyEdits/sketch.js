@@ -1,13 +1,15 @@
 var sound, amplitude, frequency, fft;
 
 //slider variables
-var sliderLength = 500;
-var sliderStart = 100; sliderStop = 500;
+var sliderLength = window.innerWidth - 20;
+var sliderStart = 20; sliderStop = window.innerWidth - 20;
     //ball on the slider
-var panX = 100, panY = 200;
-var frequencyX = 100, frequencyY = 350;
-var reverbX = 100, reverbY = 500;
+var panX = 20, panY = 200; //check with Kathy what changing this does/how it affects the editing
+var frequencyX = 20, frequencyY = 350;
+var reverbX = 20, reverbY = 500;
 var sliderBallRadius = 10;
+
+//scale everything off displayheight + width
 
 var visualizationColor;
 
@@ -16,7 +18,7 @@ var angle = 0;
 
 //BounceCircle variables
 var ellipseR = 25;
-var ellipseX = 300, ellipseY = 400;
+var ellipseX = (window.innerHeight/6) + 20, ellipseY = (window.innerHeight/6) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
 
@@ -38,16 +40,27 @@ var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
 var drawQuadClicked = false;
 
+var canvas;
+
 
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
     sound = loadSound('assets/toilet.wav');
 }
 
+function windowResize() {
+    resizeCanvas(displayWidth, displayHeight);
+};
+  
+window.addEventListener('resize', windowResize);
+
 function setup() {
+
     angleMode(DEGREES);
     // createCanvas(1500,700);
     createCanvas(displayWidth, displayHeight);
+
+
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
@@ -58,7 +71,7 @@ function setup() {
     reverb.process(sound, 3, 2);
 
     //load image of diff visualization buttons
-    img = loadImage('assets/button.png');
+    // img = loadImage('assets/button.png');
     visualizationColor = document.getElementById('lineColor').value
 
 }
@@ -236,8 +249,8 @@ function drawVisualization2(parameter1, parameter2){
 
 function drawEllipse() {
 
-    var rectW = 500; rectH = 500;     //canvas width & height
-    var startX = 700; startY = 150; 
+    var rectW = width; rectH = width;     //canvas width & height
+    var startX = 20 ; startY = 20 + height/3; 
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
@@ -254,9 +267,8 @@ function drawEllipse() {
   }
   function drawRect() {
     
-    var rectW = 500; rectH = 500;     //canvas width & height
-    var startX = 700; startY = 150; 
-
+    var rectW = width; rectH = width;     //canvas width & height
+    var startX = 20 ; startY = 20 + height/3; 
     rectMode(CENTER)
     
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
@@ -274,8 +286,8 @@ function drawEllipse() {
   }
   
   function drawTriangle() {
-    var rectW = 500; rectH = 500;     //canvas width & height
-    var startX = 700; startY = 150; 
+    var rectW = width; rectH = width;  
+    var startX = 20 ; startY = 20 + height/3; 
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
@@ -296,8 +308,8 @@ function drawEllipse() {
   }
 
   function drawQuad() {
-    var rectW = 500; rectH = 500;     //canvas width & height
-    var startX = 700; startY = 150; 
+    var rectW = width; rectH = width;    
+    var startX = 20 ; startY = 20 + height/3; 
 
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
@@ -320,8 +332,8 @@ function drawEllipse() {
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
-    var rectW = 500; rectH = 500;     //canvas width & height
-    var startX = 50; startY = 150;    //canvas upper left corner
+    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
 
     noFill();
     stroke(255);
@@ -384,8 +396,8 @@ function mousePressed(){
 //bounce circle to manipulate sound
 function drawBounceCircle(){
     //draw canvas
-    var rectW = 500; rectH = 500;   //canvas width & height
-    var startX = 50; startY = 150;  //canvas upper left corner
+    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var startX = 20; startY = 20;  //canvas upper left corner
 
     fill(255);
     stroke(255);
@@ -451,7 +463,7 @@ function visualizeSliders(){
     drawVisualization2(frequencyX, reverbX);
 }
 
-//draw amplitude slider
+//draw direction slider
 function drawDirection(){
     //direction text
     textSize(22);

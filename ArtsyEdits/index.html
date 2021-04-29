@@ -23,22 +23,40 @@
 </head>
 
 <body style="background-color:black;">
-  <h1 style="color:white;">Time: 3:00</h1>
-  <button type="button" id="soundButton">Play Sound</button>
-  <button type="button" id="sliderButton">Slider</button>
-  <button type="button" id="bounceCircle">BounceCircle</button>
-  <button type="button" id="drawCurve">DrawCurve</button>
-  <!-- <img src="assets/button.png" alt="Visualization buttons" width="595" height="62"> -->
-  <h3>Choose Visualization:</h3>
-  <button type="button" id="rectangleButton">Rectangle</button>
-  <button type="button" id="ellipseButton">Ellipse</button>
-  <button type="button" id="triangleButton">Trangle</button>
-  <button type="button" id="quadirlateralButton">Quadrilateral</button>
-  <button type="button" id="visualizationButton">Visualization</button>
-  <h1 style="color:white;" id="countdown"></h1>
+  <div class = "container-fluid">
+    <div class = "row">
+      <div class ="col-xs-12">
+        <h1 style="color:white;">Time: 3:00</h1>
+        <button type="button" id="soundButton">Play Sound</button>
+        <button type="button" id="sliderButton">Slider</button>
+        <button type="button" id="bounceCircle">BounceCircle</button>
+        <button type="button" id="drawCurve">DrawCurve</button>
+      </div>
+    </div>
+    <div class = "row">
+      <div class ="col-xs-12">
+        <!-- <img src="assets/button.png" alt="Visualization buttons" width="595" height="62"> -->
+        <h3>Choose Visualization:</h3>
+        <button type="button" id="rectangleButton">Rectangle</button>
+        <button type="button" id="ellipseButton">Ellipse</button>
+        <button type="button" id="triangleButton">Trangle</button>
+        <button type="button" id="quadirlateralButton">Quadrilateral</button>
+        <button type="button" id="visualizationButton">Visualization</button>
+        <h1 style="color:white;" id="countdown"></h1>
 
-  <label for="lineColor">Select the color for your visualization</label>
-  <input type="color" id="lineColor" name="linecolor" value="#ff0000">
+        <label for="lineColor">Select the color for your visualization</label>
+        <input type="color" id="lineColor" name="linecolor" value="#ff0000">
+      </div>
+    </div>
+    <div class = "row">
+      <div class = "col-xs-12">
+        <!-- <div id="divforCanvas">
+         
+        </div> -->
+
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
