@@ -19,16 +19,44 @@ var ellipseR = 25;
 var ellipseX = 300, ellipseY = 400;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
+var curveArray = [];
+
+class curve {
+    constructor(){
+        this.xAxis = [];
+        this.yAxis = [];
+    }
+
+    saveCoordinates(){
+        append(this.xAxis, mouseX);
+        append(this.yAxis, mouseY);
+    }
+
+    display(){
+        for (var i = 0; i < this.xAxis.length; i++){
+            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
+        }
+    }
+
+    bounce(){
+        for (var i = 0; i < this.xAxis.length; i++){
+            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
+                ellipseDeltaX = -ellipseDeltaX;
+                ellipseDeltaY = -ellipseDeltaY;
+            }
+        }
+    }
+}
 
 //drawCurve variables
-var lines = {
-    xAxis : [],
-    yAxis : [],
-};
+var newCurve;
+var newCurveExist = false;
+var volume = 0; freq = 0;
+
 
 //determine manipulation method
-var sliderButtonClicked = true;
-var bounceCircleButtonClicked = false;
+var sliderButtonClicked = false;
+var bounceCircleButtonClicked = true;
 var drawCurveButtonClicked = false;
 
 //determine visualization
@@ -46,7 +74,6 @@ function preload() {
 
 function setup() {
     angleMode(DEGREES);
-    // createCanvas(1500,700);
     createCanvas(displayWidth, displayHeight);
     angleMode(DEGREES);
     amplitude = new p5.Amplitude();
@@ -58,7 +85,6 @@ function setup() {
     reverb.process(sound, 3, 2);
 
     //load image of diff visualization buttons
-    img = loadImage('assets/button.png');
     visualizationColor = document.getElementById('lineColor').value
 
 }
@@ -317,6 +343,24 @@ function drawEllipse() {
     }
   }
 
+function mousePressed(){
+    //create a new curve and append to curveArray
+    if (bounceCircleButtonClicked == true){
+        var singleCurve = new curve();
+        append(curveArray, singleCurve);
+    }
+    //create a new curve and reset curve
+    if (drawCurveButtonClicked == true){
+        newCurve = new curve();
+        newCurveExist = true;
+        newCurve.xAxis = [];
+        volume = 0;
+        newCurve.yAxis = [];
+        freq = 0;
+    }
+
+}
+
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
@@ -331,54 +375,32 @@ function drawCurve(){
         startX + rectW, startY,
         startX + rectW, startY + rectH,
         startX, startY + rectH);
-    //
-    var volume = 0; freq = 0;
 
-    IsDrawingCurve()
+    if (newCurveExist == true){
+        if (mouseIsPressed === true) {
+            //as mouse is dragging to draw, add x and y coordinates to list
+            newCurve.saveCoordinates();
+        }
+        stroke(255);
+        strokeWeight(3);
+        newCurve.display();
 
-    //calculate sum of x and y coordinates in the list
-    for (var i = 0; i <lines.xAxis.length ; i++){
-        volume += lines.xAxis[i];
-        freq += lines.yAxis[i];
+        //calculate sum of x and y coordinates in the list
+        for (var i = 0; i <newCurve.xAxis.length ; i++){
+            volume += newCurve.xAxis[i];
+            freq += newCurve.yAxis[i];
+        }
+
+        //change direction
+        for (var i = 0; i <newCurve.xAxis.length ; i++){
+            let level = map(newCurve.xAxis[i], startX, startX + rectW, -1.0,1.0);
+            sound.pan(level);
+        }
+        //change frequency
+        freq = map(freq, 0, 20000, 20,20000);
+        freq = constrain(freq,20,20000);
+        filter.freq(freq);
     }
-    /*
-    //change volume
-    volume = map(volume, 0, 20000, 0, 1);
-    volume = constrain(volume, 0, 1);
-    sound.amp(volume);
-     */
-
-    //change direction
-    for (var i = 0; i <lines.xAxis.length ; i++){
-        let level = map(lines.xAxis[i], startX, startX + rectW, -1.0,1.0);
-        sound.pan(level);
-    }
-    //change frequency
-    freq = map(freq, 0, 20000, 20,20000);
-    freq = constrain(freq,20,20000);
-    filter.freq(freq);
-}
-
-//action when user is drawing a curve
-function IsDrawingCurve(){
-    if (mouseIsPressed === true) {
-        //as mouse is dragging to draw, add x and y coordinates to list
-        append(lines.xAxis, mouseX);
-        append(lines.yAxis, mouseY);
-    }
-    stroke(255);
-    strokeWeight(3);
-    for (var i = 0; i < lines.xAxis.length; i++){
-        line(lines.xAxis[i-1], lines.yAxis[i-1], lines.xAxis[i], lines.yAxis[i]);
-    }
-}
-
-//reset drawCurve variables
-function mousePressed(){
-    lines.xAxis = [];
-    volume = 0;
-    lines.yAxis = [];
-    freq = 0;
 }
 
 //bounce circle to manipulate sound
@@ -396,12 +418,26 @@ function drawBounceCircle(){
         startX + rectW, startY + rectH,
         startX, startY + rectH);
 
+    //draw curve
+    if (mouseIsPressed === true) {
+        //as mouse is dragging to draw, add x and y coordinates to array
+        curveArray[curveArray.length-1].saveCoordinates();
+    }
+    stroke(0);
+    strokeWeight(3);
+    for (var i = 0; i < curveArray.length; i++){
+        curveArray[i].display();
+        curveArray[i].bounce();
+        let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
+        reverb.drywet(dryWet);
+    }
+
     //draw circle
     fill(0);
     stroke(0);
     ellipse(ellipseX,ellipseY,ellipseR*2);
 
-    //circle bounce
+    //circle bounce off boundary
     ellipseX += ellipseDeltaX;
     ellipseY += ellipseDeltaY;
 
@@ -441,8 +477,6 @@ function drawSliders(){
         changeFrequency();
         changeReverb();
     }
-    //visualize
-    // visualizeSliders();
 }
 
 //draw visualization corresponding to slider values
@@ -496,6 +530,15 @@ function drawReverb(){
     ellipse(reverbX, reverbY, sliderBallRadius*2);
 }
 
+//audio direction changes as direction slider changes
+function changeDirection(){
+    if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
+        panX = constrain(mouseX, sliderStart, sliderStop);
+        let level = map(panX, sliderStart, sliderStop, -1.0,1.0);
+        sound.pan(level);
+    }
+}
+
 //frequency changes as frequency slider changes
 function changeFrequency(){
     if (mouseY > (frequencyY - sliderBallRadius) && mouseY < (frequencyY + sliderBallRadius)) {
@@ -513,15 +556,6 @@ function changeReverb(){
         reverbX = constrain(mouseX, sliderStart, sliderStop);
         let dryWet = constrain(map(reverbX, sliderStart, sliderStop, 0, 1), 0, 1);
         reverb.drywet(dryWet);
-    }
-}
-
-//audio direction changes as direction slider changes
-function changeDirection(){
-    if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
-        panX = constrain(mouseX, sliderStart, sliderStop);
-        let level = map(panX, sliderStart, sliderStop, -1.0,1.0);
-        sound.pan(level);
     }
 }
 
