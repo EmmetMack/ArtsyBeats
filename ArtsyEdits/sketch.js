@@ -1,10 +1,10 @@
 var sound, amplitude, frequency, fft;
 
 //slider variables
-var sliderLength = window.innerWidth - 20;
-var sliderStart = 20; sliderStop = window.innerWidth - 20;
+var sliderLength = 355
+var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
     //ball on the slider
-var panX = 20, panY = 75; //check with Kathy what changing this does/how it affects the editing
+var panX = 20, panY = 75;
 var frequencyX = 20, frequencyY = 200;
 var reverbX = 20, reverbY = 350;
 var sliderBallRadius = 10;
@@ -50,6 +50,7 @@ function preload() {
 
 function windowResize() {
     resizeCanvas(displayWidth, displayHeight);
+    redraw();
 };
   
 window.addEventListener('resize', windowResize);
@@ -250,7 +251,7 @@ function drawVisualization2(parameter1, parameter2){
 function drawEllipse() {
 
     var rectW = width; rectH = width;     //canvas width & height
-    var startX = 20 ; startY = 20 + height/3; 
+    var startX = 0; startY = 20 + height/3; 
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
@@ -268,7 +269,7 @@ function drawEllipse() {
   function drawRect() {
     
     var rectW = width; rectH = width;     //canvas width & height
-    var startX = 20 ; startY = 20 + height/3; 
+    var startX = 0; startY = 20 + height/3; 
     rectMode(CENTER)
     
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
@@ -285,6 +286,7 @@ function drawEllipse() {
     
   }
   
+  //TO DO: FIX THESE
   function drawTriangle() {
     var rectW = width; rectH = width;  
     var startX = 20 ; startY = 20 + height/3; 
