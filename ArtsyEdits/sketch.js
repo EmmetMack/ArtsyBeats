@@ -5,8 +5,8 @@ var sliderLength = 355
 var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
     //ball on the slider
 var panX = 20, panY = 75;
-var frequencyX = 20, frequencyY = 200;
-var reverbX = 20, reverbY = 350;
+var frequencyX = 20, frequencyY = 175;
+var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
 //scale everything off displayheight + width
@@ -18,7 +18,7 @@ var angle = 0;
 
 //BounceCircle variables
 var ellipseR = 25;
-var ellipseX = (window.innerHeight/6) + 20, ellipseY = (window.innerHeight/6) + 20;
+var ellipseX = (window.innerWidth/2), ellipseY = (window.innerHeight/6) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
 var curveArray = [];
@@ -317,11 +317,11 @@ function drawEllipse() {
   //TO DO: FIX THESE
   function drawTriangle() {
     var rectW = width; rectH = width;  
-    var startX = 20 ; startY = 20 + height/3; 
+    var startX = 20 ; startY = 20 + (.4* height); 
 
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + 1; 
+    // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1; 
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
@@ -331,9 +331,9 @@ function drawEllipse() {
     stroke(visualizationColor)
     strokeWeight(5)
     if (widthFreq != 0) {
-        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
+        triangle(.75*rectW, startY + rectH/2, rectW/2, startY + size,  rectW/4,  startY + rectH/2)
     } else {
-        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
+        triangle(.75*rectW, startY + .75 * rectH, rectW/2, startY + rectW/4,  rectW/4,  startY + .75*rectH)
     }
   }
 
@@ -380,7 +380,7 @@ function mousePressed(){
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var rectW = displayWidth-40; rectH = displayHeight/3;   //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
 
     noFill();
@@ -422,7 +422,7 @@ function drawCurve(){
 //bounce circle to manipulate sound
 function drawBounceCircle(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var rectW = displayWidth - 40; rectH = displayHeight/3;   //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner
 
     fill(255);
