@@ -9,7 +9,7 @@ var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
-var panLevel = 0;
+var panLevel = 1;
 
 //scale everything off displayheight + width
 
@@ -121,7 +121,7 @@ var drawRectClicked = true;
 var drawEllipseClicked = false;
 var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
-var drawQuadClicked = false;
+var drawRandomClicked = false;
 
 var canvas;
 
@@ -189,7 +189,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -197,7 +197,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = true;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('triangleButton').onclick = function() {
@@ -205,15 +205,15 @@ function draw() {
         drawTriangleClicked = true;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
-    document.getElementById('quadirlateralButton').onclick = function() {
+    document.getElementById('randomButton').onclick = function() {
         drawRectClicked = false;
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = true;
+        drawRandomClicked = true;
     }
 
     document.getElementById('visualizationButton').onclick = function() {
@@ -221,7 +221,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = true;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('lineColor').onchange = function() {
@@ -247,13 +247,14 @@ function draw() {
     } else if (drawEllipseClicked == true) {
         drawEllipse();
     } else {
-        drawQuad();
+        drawRandom();
     }
 }
 
 
 //math equations to draw one visualization
 function drawVisualization1() {
+    angleMode(DEGREES)
     //get&map amplitude
     var ampLevel = amplitude.getLevel();
     var drawLine = map(ampLevel, 0, 0.1, 100, 800);
@@ -278,7 +279,7 @@ function drawVisualization1() {
 
 //math equations to draw one visualization
 function drawVisualization2(parameter1, parameter2){
-
+    angleMode(DEGREES)
     //Epicycloid Involute
     beginShape();
     // stroke(242, 194, 203);
@@ -299,7 +300,7 @@ function drawVisualization2(parameter1, parameter2){
 
 
 function drawEllipse() {
-
+    angleMode(DEGREES)
     var rectW = width; rectH = width;     //canvas width & height
     var startX = 0; startY = 20 + height/3; 
 
@@ -326,9 +327,8 @@ function drawEllipse() {
     noFill()
     stroke(visualizationColor)
     strokeWeight(5)
-
     if (sizeArray.length == 5) {
-        
+
         angle = angle + (panLevel*2.5);
         ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
         rotate(angle);
@@ -374,13 +374,13 @@ function drawEllipse() {
   }
 
   function drawRect() {
-
+    angleMode(DEGREES)
     var rectW = width; rectH = width;     //canvas width & height
     var startX = 0; startY = 20 + height/3;
     rectMode(CENTER)
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
-    angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
+    angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
@@ -392,33 +392,65 @@ function drawEllipse() {
 
   }
 
+  function polygon(x, y, radius, npoints) {
+    angleMode(RADIANS);
+
+    var angle = TWO_PI / npoints;
+    
+	beginShape();
+	for (var a = 0; a < TWO_PI; a += angle) {
+		var sx = x + cos(a) * radius;
+		var sy = y + sin(a) * radius;
+		vertex(sx, sy);
+	}
+	endShape(CLOSE);
+}
+
   //TO DO: FIX THESE
   function drawTriangle() {
+    angleMode(RADIANS);
     var rectW = width; rectH = width;
     var startX = 20 ; startY = 20 + height/3;
 
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + 1;
-
+    translate((rectW/2), startY + (rectH/2) + 50); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1;
+    
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    if (widthFreq != 0) {
-        triangle(.75*rectW, startY + rectH/2, rectW/2, startY + size,  rectW/4,  startY + rectH/2)
-    } else {
-        triangle(.75*rectW, startY + .75 * rectH, rectW/2, startY + rectW/4,  rectW/4,  startY + .75*rectH)
-    }
+
+    pieces = 20;
+
+	for (i = 0; i < pieces; i += 0.1) {
+
+		rotate(TWO_PI / (pieces / 2));
+
+		push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        fill(visualizationColor)
+        polygon((75 * panLevel), (widthFreq), size, 3)
+		pop();
+	}
   }
 
-  function drawQuad() {
+  function randomNumber(min, max) { 
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+} 
+
+  let sides = randomNumber(4, 15);
+
+
+  function drawRandom() {
+    angleMode(RADIANS);
     var rectW = width; rectH = width;
     var startX = 20 ; startY = 20 + height/3;
 
+    translate((rectW/2), startY + (rectH/2) + 50); //set the new origin/point of rotation
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
     // angle = angle + 1;
@@ -427,14 +459,20 @@ function drawEllipse() {
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    if (widthFreq != 0) {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
-    } else {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
-    }
+
+    pieces = panLevel + 1;
+
+    for (i = 0; i < pieces; i += .5) {
+
+		rotate(TWO_PI / (pieces/2));
+
+		push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        fill(visualizationColor)
+        polygon(70 * panLevel, (size), widthFreq * .75, sides)
+		pop();
+	}
   }
 
 function mousePressed(){
