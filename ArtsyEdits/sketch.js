@@ -9,6 +9,8 @@ var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
+var panLevel = 0;
+
 //scale everything off displayheight + width
 
 var visualizationColor;
@@ -22,6 +24,10 @@ var ellipseX = (window.innerWidth/2), ellipseY = (window.innerHeight/6) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
     //two bars to bounce off with
+
+var widthArray = [];
+var sizeArray = []; 
+
 class bar {
     constructor(x,y) {
         this.x = x;
@@ -291,24 +297,82 @@ function drawVisualization2(parameter1, parameter2){
     }
 }
 
+
 function drawEllipse() {
 
     var rectW = width; rectH = width;     //canvas width & height
     var startX = 0; startY = 20 + height/3; 
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + 1;
+   
+
     let spectrum = fft.analyze()
+    
     widthFreq = spectrum[0]
+    if (widthArray.length == 5) {
+        let widthIndex = Math.floor(Math.random() * 5)
+        widthArray[widthIndex] = widthFreq
+    } else {
+        widthArray.push(widthFreq)
+    }
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
+    if (sizeArray.length == 5) {
+        let sizeIndex = Math.floor(Math.random() * 5)
+         sizeArray[sizeIndex] = size
+     } else {
+        sizeArray.push(size)
+    }
     noFill()
     stroke(visualizationColor)
     strokeWeight(5)
-    ellipse(0, 0 , size, widthFreq)
 
+    if (sizeArray.length == 5) {
+        
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2]) 
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4]) 
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 5], widthArray[widthArray.length - 5]) 
+        rotate(angle);    
+    } else if (sizeArray.length == 4) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])  
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])    
+        rotate(angle);
+    } else 
+    if (sizeArray.length == 3) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])  
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
+        rotate(angle);
+    } else if (sizeArray.length == 2) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])   
+        rotate(angle);
+    } else {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+    }
+ 
   }
+
   function drawRect() {
 
     var rectW = width; rectH = width;     //canvas width & height
@@ -582,6 +646,7 @@ function drawBounceCircle(){
     }
     //change direction
     let level = map(ellipseX, startX, startX+rectW, -1.0,1.0);
+    panLevel = level;
     sound.pan(level);
 
     //change frequency
@@ -665,6 +730,7 @@ function changeDirection(){
     if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
         panX = constrain(mouseX, sliderStart, sliderStop);
         let level = map(panX, sliderStart, sliderStop, -1.0,1.0);
+        panLevel = level;
         sound.pan(level);
     }
 }
