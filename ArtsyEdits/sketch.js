@@ -21,45 +21,94 @@ var ellipseR = 25;
 var ellipseX = (window.innerWidth/2), ellipseY = (window.innerHeight/6) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
-var curveArray = [];
-
-class curve {
-    constructor(){
-        this.xAxis = [];
-        this.yAxis = [];
+    //two bars to bounce off with
+class bar {
+    constructor(x,y) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 120;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.dragging = false;
+        this.haveBeenDragged = false;
     }
 
-    saveCoordinates(){
-        append(this.xAxis, mouseX);
-        append(this.yAxis, mouseY);
-    }
-
-    display(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
+    display(px, py, sx, sy, sw, sh){
+        if (this.dragging){
+            //move bar when dragging
+            this.x = this.offsetX + px;
+            this.y = this.offsetY + py;
         }
+        fill(125);
+        noStroke();
+        //constrain bar within canvas
+        this.x = constrain(this.x, sx, sx+sw-this.width);
+        this.y = constrain(this.y, sy, sy+sh-this.height);
+        //draw bar
+        rect(this.x, this.y, this.width, this.height);
     }
 
     bounce(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
-                ellipseDeltaX = -ellipseDeltaX;
-                ellipseDeltaY = -ellipseDeltaY;
-            }
+        //determine which side of the bar to test
+        let testX = ellipseX, testY = ellipseY;
+        let testingX = false, testingY = false;
+        //test left bar
+        if (ellipseX < this.x){
+            testX = this.x;
+            testingX = true;
+            //test right bar
+        } else if(ellipseX > this.x + this.width){
+            testX = this.x + this.width;
+            testingX = true;
         }
+        //test top bar
+        if (ellipseY < this.y){
+            testY = this.y;
+            testingY = true;
+            //test bottom bar
+        } else if (ellipseY > this.y + this.height){
+            testY = this.y + this.height;
+            testingY = true;
+        }
+        //calculate distance between testing side and circle center
+        let d = dist(ellipseX, ellipseY, testX, testY)
+        //collide at left / right side
+        if (d <= ellipseR && testingX == true){
+            ellipseDeltaX = -ellipseDeltaX;
+        }
+        //collide at top / bottom side
+        if (d <= ellipseR && testingY == true){
+            ellipseDeltaY = -ellipseDeltaY;
+        }
+    }
+
+    drag(px, py){
+        //check if clicked within bar
+        if (px > this.x && px < this.x + this.width && py > this.y && py < this.y + this.height){
+            this.dragging = true;
+            this.haveBeenDragged = true;
+            //calculate distance between mouse and rect left corner
+            this.offsetX = this.x - px;
+            this.offsetY = this.y - py;
+        }
+    }
+    released(){
+        this.dragging = false;
     }
 }
 
-//drawCurve variables
-var newCurve;
-var newCurveExist = false;
-var volume = 0; freq = 0;
+var bar1 = new bar(0,0);
+var bar2 = new bar(0, 0);
+// var curveArray = [];
+
+
 
 
 //determine manipulation method
 var sliderButtonClicked = false;
-var bounceCircleButtonClicked = true;
-var drawCurveButtonClicked = false;
+var bounceCircleButtonClicked = false;
+var drawCurveButtonClicked = true;
 
 //determine visualization
 var drawRectClicked = true;
@@ -88,9 +137,6 @@ function setup() {
     angleMode(DEGREES);
     // createCanvas(1500,700);
     createCanvas(displayWidth, displayHeight);
-
-
-    angleMode(DEGREES);
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
     filter = new p5.BandPass();
@@ -98,9 +144,6 @@ function setup() {
     sound.disconnect();
     sound.connect(filter);
     reverb.process(sound, 3, 2);
-
-    //load image of diff visualization buttons
-    // img = loadImage('assets/button.png');
     visualizationColor = document.getElementById('lineColor').value
 
 }
@@ -179,35 +222,6 @@ function draw() {
         visualizationColor = document.getElementById('lineColor').value
     }
 
-    document.getElementById('lineColor').onselect = function() {
-        visualizationColor = document.getElementById('lineColor').value
-    }
-
-    if (sliderButtonClicked == true){
-        drawSliders();
-        sound.rate(1);
-    }
-
-    document.getElementById('ellipseButton').onclick = function() {
-        drawRectClicked = false;
-        drawTriangleClicked = false;
-        drawEllipseClicked = true;
-        drawVisualizationClicked = false;
-    }
-
-    document.getElementById('triangleButton').onclick = function() {
-        drawRectClicked = false;
-        drawTriangleClicked = true;
-        drawEllipseClicked = false;
-        drawVisualizationClicked = false;
-    }
-
-    document.getElementById('visualizationButton').onclick = function() {
-        drawRectClicked = false;
-        drawTriangleClicked = false;
-        drawEllipseClicked = false;
-        drawVisualizationClicked = true;
-    }
 
     if (sliderButtonClicked == true){
         drawSliders();
@@ -219,17 +233,18 @@ function draw() {
     }
 
     if (drawRectClicked == true) {
-        drawRect()
+        drawRect();
     } else if (drawTriangleClicked == true) {
-        drawTriangle()
+        drawTriangle();
     } else if (drawVisualizationClicked == true) {
-        visualizeSliders()
+        visualizeSliders();
     } else if (drawEllipseClicked == true) {
-        drawEllipse()
+        drawEllipse();
     } else {
-        drawQuad()
+        drawQuad();
     }
 }
+
 
 //math equations to draw one visualization
 function drawVisualization1() {
@@ -283,7 +298,7 @@ function drawEllipse() {
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
-    angle = angle + 1; 
+    angle = angle + 1;
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
@@ -292,14 +307,13 @@ function drawEllipse() {
     stroke(visualizationColor)
     strokeWeight(5)
     ellipse(0, 0 , size, widthFreq)
-    
+
   }
   function drawRect() {
-    
+
     var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3; 
+    var startX = 0; startY = 20 + height/3;
     rectMode(CENTER)
-    
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
@@ -311,17 +325,17 @@ function drawEllipse() {
     stroke(visualizationColor)
     strokeWeight(5)
     rect(0,0, size, widthFreq)
-    
+
   }
-  
+
   //TO DO: FIX THESE
   function drawTriangle() {
-    var rectW = width; rectH = width;  
-    var startX = 20 ; startY = 20 + (.4* height); 
+    var rectW = width; rectH = width;
+    var startX = 20 ; startY = 20 + height/3;
 
-    // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    // rotate(angle);
-    // angle = angle + 1; 
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
@@ -338,12 +352,12 @@ function drawEllipse() {
   }
 
   function drawQuad() {
-    var rectW = width; rectH = width;    
-    var startX = 20 ; startY = 20 + height/3; 
+    var rectW = width; rectH = width;
+    var startX = 20 ; startY = 20 + height/3;
 
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
-    // angle = angle + 1; 
+    // angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
@@ -355,24 +369,106 @@ function drawEllipse() {
     if (widthFreq != 0) {
         quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
     } else {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )    
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
     }
   }
 
 function mousePressed(){
     //create a new curve and append to curveArray
     if (bounceCircleButtonClicked == true){
-        var singleCurve = new curve();
-        append(curveArray, singleCurve);
+        bar1.drag(mouseX, mouseY);
+        bar2.drag(mouseX, mouseY);
+        //var singleCurve = new curve();
+        //append(curveArray, singleCurve);
     }
     //create a new curve and reset curve
     if (drawCurveButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
-        newCurve.xAxis = [];
-        volume = 0;
-        newCurve.yAxis = [];
-        freq = 0;
+        newCurve.draw();
+        toggleSound();
+        newCurve.clear();
+    }
+}
+
+// function mouseDragged(){
+//     console.log("hi")
+//     newCurve.saveCoordinates();
+// }
+
+function mouseReleased(){
+    if (bounceCircleButtonClicked == true){
+        bar1.released();
+        bar2.released();
+    }
+    if (drawCurveButtonClicked == true){
+        newCurve.released();
+        toggleSound();
+    }
+}
+
+//drawCurve variables
+var newCurve;
+var newCurveExist = false;
+class curve {
+    constructor(){
+        this.xAxis = [];
+        this.yAxis = [];
+        this.drawing = false;
+        this.frameCount = 0;
+        this.animating = false;
+        this.volume = 0;
+        this.freq = 0;
+    }
+
+    saveCoordinates(){
+        append(this.xAxis, mouseX);
+        append(this.yAxis, mouseY);
+        //this.frameCount += 1;
+    }
+
+    display(sx, sy, sw, sh){
+        for (var i = 0; i < this.xAxis.length; i++){
+            strokeWeight(3);
+            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
+            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i-1], sh+sy);
+            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sh+sy);
+        }
+    }
+
+    bounce(){
+        for (var i = 0; i < this.xAxis.length; i++){
+            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
+                ellipseDeltaX = -ellipseDeltaX;
+                ellipseDeltaY = -ellipseDeltaY;
+            }
+        }
+    }
+
+    animate(sx, sy, sw, sh){
+        for (var i = 0; i < this.frameCount; i++) {
+            stroke(0);
+            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sy + sh);
+        }
+        this.frameCount += 1;
+
+    }
+
+    draw(){
+        this.drawing = true;
+    }
+
+    released(){
+        this.drawing = false;
+        this.animating = true;
+    }
+
+    clear(){
+        this.xAxis = [];
+        this.volume = 0;
+        this.yAxis = [];
+        this.freq = 0;
+        this.frameCount = 0;
     }
 
 }
@@ -380,60 +476,61 @@ function mousePressed(){
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
-    var rectW = displayWidth-40; rectH = displayHeight/3;   //canvas width & height
+    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
-
-    noFill();
+    rectMode(CORNER);
+    fill(255);
     stroke(255);
-    //used quad for potentially move four corners as ball moving
-    //inspired by https://learningsynths.ableton.com/
-    quad(startX, startY,
-        startX + rectW, startY,
-        startX + rectW, startY + rectH,
-        startX, startY + rectH);
+    rect(startX, startY, rectW, rectH);
 
     if (newCurveExist == true){
-        if (mouseIsPressed === true) {
+        if (newCurve.drawing) {
             //as mouse is dragging to draw, add x and y coordinates to list
-            newCurve.saveCoordinates();
+            if (mouseX > startX && mouseX < startX+rectH && mouseY > startY && mouseY < startY+rectH){
+                newCurve.saveCoordinates();
+            }
+            stroke(0);
+        } else{
+            stroke(125);
         }
-        stroke(255);
-        strokeWeight(3);
-        newCurve.display();
+        newCurve.display(startX, startY, rectW, rectH);
+
+        if (newCurve.animating){
+            newCurve.animate(startX, startY, rectW, rectH);
+        }
 
         //calculate sum of x and y coordinates in the list
         for (var i = 0; i <newCurve.xAxis.length ; i++){
-            volume += newCurve.xAxis[i];
-            freq += newCurve.yAxis[i];
+            newCurve.volume += newCurve.xAxis[i];
+            newCurve.freq += newCurve.yAxis[i];
         }
 
+        /*
         //change direction
         for (var i = 0; i <newCurve.xAxis.length ; i++){
             let level = map(newCurve.xAxis[i], startX, startX + rectW, -1.0,1.0);
             sound.pan(level);
         }
         //change frequency
-        freq = map(freq, 0, 20000, 20,20000);
-        freq = constrain(freq,20,20000);
-        filter.freq(freq);
+        newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
+        newCurve.freq = constrain(newCurve.freq,20,20000);
+        filter.freq(newCurve.freq);
+         */
     }
+
+
 }
 
 //bounce circle to manipulate sound
 function drawBounceCircle(){
     //draw canvas
-    var rectW = displayWidth - 40; rectH = displayHeight/3;   //canvas width & height
+    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner
-
+    rectMode(CORNER);
     fill(255);
     stroke(255);
-    //used quad for potentially move four corners as ball moving
-    //inspired by https://learningsynths.ableton.com/
-    quad(startX, startY,
-        startX + rectW, startY,
-        startX + rectW, startY + rectH,
-        startX, startY + rectH);
-
+    rect(startX, startY, rectW, rectH);
+/*
     //draw curve
     if (mouseIsPressed === true) {
         //as mouse is dragging to draw, add x and y coordinates to array
@@ -447,6 +544,21 @@ function drawBounceCircle(){
         let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
         reverb.drywet(dryWet);
     }
+ */
+
+    //draw bar
+    if (bar1.haveBeenDragged == false){
+        bar1.x = startX + 50;
+        bar1.y = startY + 50;
+    }
+    if (bar2.haveBeenDragged == false){
+        bar2.x = startX + rectW - bar2.width - 50;
+        bar2.y = startY + rectH - bar2.height - 50;
+    }
+    bar1.display(mouseX, mouseY, startX, startY, rectW, rectH);
+    bar2.display(mouseX, mouseY, startX, startY, rectW, rectH);
+    bar1.bounce();
+    bar2.bounce();
 
     //draw circle
     fill(0);
@@ -590,9 +702,9 @@ function toggleSound() {
         sound.play();
         sound.loop();
         //bounce circle - move circle with a random direction & velocity
-        ellipseDeltaX = random(-5, 5);
-        ellipseDeltaY = random(-5, 5);
+        if (bounceCircleButtonClicked == true){
+            ellipseDeltaX = random(-5, 5);
+            ellipseDeltaY = random(-5, 5);
+        }
     }
 }
-
-
