@@ -97,61 +97,11 @@ class bar {
     }
 }
 
-var bar1 = new bar(70,70);
-var bar2 = new bar(150, 160);
+var bar1 = new bar(0,0);
+var bar2 = new bar(0, 0);
 // var curveArray = [];
 
-class curve {
-    constructor(){
-        this.xAxis = [];
-        this.yAxis = [];
-        this.drawing = false;
-        this.drawingStopped = false;
-    }
 
-    saveCoordinates(){
-        append(this.xAxis, mouseX);
-        append(this.yAxis, mouseY);
-    }
-
-    display(sx, sy, sw, sh){
-        for (var i = 0; i < this.xAxis.length; i++){
-            stroke(0);
-            strokeWeight(3);
-            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
-            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i-1], sh+sy);
-            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sh+sy);
-        }
-    }
-
-    bounce(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
-                ellipseDeltaX = -ellipseDeltaX;
-                ellipseDeltaY = -ellipseDeltaY;
-            }
-        }
-    }
-
-    replay(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            stroke(125);
-            strokeWeight(3);
-            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
-            line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i-1], rectH+startY);
-            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], rectH+startY);
-        }
-        for (var i = 0; i < this.xAxis.length; i++){
-
-        }
-    }
-
-}
-
-//drawCurve variables
-var newCurve;
-var newCurveExist = false;
-var volume = 0; freq = 0;
 
 
 //determine manipulation method
@@ -178,7 +128,7 @@ function windowResize() {
     resizeCanvas(displayWidth, displayHeight);
     redraw();
 };
-  
+
 window.addEventListener('resize', windowResize);
 
 function setup() {
@@ -345,7 +295,7 @@ function drawEllipse() {
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
-    angle = angle + 1; 
+    angle = angle + 1;
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
@@ -357,9 +307,9 @@ function drawEllipse() {
 
   }
   function drawRect() {
-    
+
     var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3; 
+    var startX = 0; startY = 20 + height/3;
     rectMode(CENTER)
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
@@ -374,15 +324,15 @@ function drawEllipse() {
     rect(0,0, size, widthFreq)
 
   }
-  
+
   //TO DO: FIX THESE
   function drawTriangle() {
-    var rectW = width; rectH = width;  
-    var startX = 20 ; startY = 20 + height/3; 
+    var rectW = width; rectH = width;
+    var startX = 20 ; startY = 20 + height/3;
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
-    angle = angle + 1; 
+    angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
@@ -399,12 +349,12 @@ function drawEllipse() {
   }
 
   function drawQuad() {
-    var rectW = width; rectH = width;    
-    var startX = 20 ; startY = 20 + height/3; 
+    var rectW = width; rectH = width;
+    var startX = 20 ; startY = 20 + height/3;
 
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
-    // angle = angle + 1; 
+    // angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
@@ -416,7 +366,7 @@ function drawEllipse() {
     if (widthFreq != 0) {
         quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
     } else {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )    
+        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
     }
   }
 
@@ -432,19 +382,92 @@ function mousePressed(){
     if (drawCurveButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
-        newCurve.xAxis = [];
-        volume = 0;
-        newCurve.yAxis = [];
-        freq = 0;
+        newCurve.draw();
+        toggleSound();
+        newCurve.clear();
     }
-
 }
+
+// function mouseDragged(){
+//     console.log("hi")
+//     newCurve.saveCoordinates();
+// }
 
 function mouseReleased(){
     if (bounceCircleButtonClicked == true){
         bar1.released();
         bar2.released();
     }
+    if (drawCurveButtonClicked == true){
+        newCurve.released();
+        toggleSound();
+    }
+}
+
+//drawCurve variables
+var newCurve;
+var newCurveExist = false;
+class curve {
+    constructor(){
+        this.xAxis = [];
+        this.yAxis = [];
+        this.drawing = false;
+        this.frameCount = 0;
+        this.animating = false;
+        this.volume = 0;
+        this.freq = 0;
+    }
+
+    saveCoordinates(){
+        append(this.xAxis, mouseX);
+        append(this.yAxis, mouseY);
+        //this.frameCount += 1;
+    }
+
+    display(sx, sy, sw, sh){
+        for (var i = 0; i < this.xAxis.length; i++){
+            strokeWeight(3);
+            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
+            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i-1], sh+sy);
+            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sh+sy);
+        }
+    }
+
+    bounce(){
+        for (var i = 0; i < this.xAxis.length; i++){
+            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
+                ellipseDeltaX = -ellipseDeltaX;
+                ellipseDeltaY = -ellipseDeltaY;
+            }
+        }
+    }
+
+    animate(sx, sy, sw, sh){
+        for (var i = 0; i < this.frameCount; i++) {
+            stroke(0);
+            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sy + sh);
+        }
+        this.frameCount += 1;
+
+    }
+
+    draw(){
+        this.drawing = true;
+    }
+
+    released(){
+        this.drawing = false;
+        this.animating = true;
+    }
+
+    clear(){
+        this.xAxis = [];
+        this.volume = 0;
+        this.yAxis = [];
+        this.freq = 0;
+        this.frameCount = 0;
+    }
+
 }
 
 //draw a curve to manipulate sound
@@ -458,32 +481,41 @@ function drawCurve(){
     rect(startX, startY, rectW, rectH);
 
     if (newCurveExist == true){
-        if (mouseIsPressed === true) {
+        if (newCurve.drawing) {
             //as mouse is dragging to draw, add x and y coordinates to list
             if (mouseX > startX && mouseX < startX+rectH && mouseY > startY && mouseY < startY+rectH){
                 newCurve.saveCoordinates();
             }
+            stroke(0);
+        } else{
+            stroke(125);
         }
         newCurve.display(startX, startY, rectW, rectH);
 
-
+        if (newCurve.animating){
+            newCurve.animate(startX, startY, rectW, rectH);
+        }
 
         //calculate sum of x and y coordinates in the list
         for (var i = 0; i <newCurve.xAxis.length ; i++){
-            volume += newCurve.xAxis[i];
-            freq += newCurve.yAxis[i];
+            newCurve.volume += newCurve.xAxis[i];
+            newCurve.freq += newCurve.yAxis[i];
         }
 
+        /*
         //change direction
         for (var i = 0; i <newCurve.xAxis.length ; i++){
             let level = map(newCurve.xAxis[i], startX, startX + rectW, -1.0,1.0);
             sound.pan(level);
         }
         //change frequency
-        freq = map(freq, 0, 20000, 20,20000);
-        freq = constrain(freq,20,20000);
-        filter.freq(freq);
+        newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
+        newCurve.freq = constrain(newCurve.freq,20,20000);
+        filter.freq(newCurve.freq);
+         */
     }
+
+
 }
 
 //bounce circle to manipulate sound
@@ -673,5 +705,3 @@ function toggleSound() {
         }
     }
 }
-
-
