@@ -469,7 +469,7 @@ function drawEllipse() {
 		push();
         strokeWeight(2)
         stroke(visualizationColor)
-        fill(visualizationColor)
+        noFill()
         polygon(70 * panLevel, (size), widthFreq * .75, sides)
 		pop();
 	}
