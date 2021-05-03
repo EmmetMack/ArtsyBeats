@@ -20,7 +20,7 @@ var angle = 0;
 
 //BounceCircle variables
 var ellipseR = 25;
-var ellipseX = (window.innerWidth/2), ellipseY = (window.innerHeight/6) + 20;
+var ellipseX = 20 + (335/2), ellipseY = (335/2) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
     //two bars to bounce off with
@@ -301,10 +301,10 @@ function drawVisualization2(parameter1, parameter2){
 
 function drawEllipse() {
     angleMode(DEGREES)
-    var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3; 
+    var rectW = 375; rectH = 375;
+    var startX = 20 ; startY = 20 + rectH;
 
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
    
 
     let spectrum = fft.analyze()
@@ -375,10 +375,10 @@ function drawEllipse() {
 
   function drawRect() {
     angleMode(DEGREES)
-    var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3;
+    var rectW = 375; rectH = 375;
+    var startX = 20 ; startY = 20 + rectH;
     rectMode(CENTER)
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
@@ -409,10 +409,10 @@ function drawEllipse() {
   //TO DO: FIX THESE
   function drawTriangle() {
     angleMode(RADIANS);
-    var rectW = width; rectH = width;
-    var startX = 20 ; startY = 20 + height/3;
+    var rectW = 375; rectH = 375;
+    var startX = 20 ; startY = 20 + rectH;
 
-    translate((rectW/2), startY + (rectH/2) + 50); //set the new origin/point of rotation
+    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
     // angle = angle + 1;
     
@@ -447,8 +447,8 @@ function drawEllipse() {
 
   function drawRandom() {
     angleMode(RADIANS);
-    var rectW = width; rectH = width;
-    var startX = 20 ; startY = 20 + height/3;
+    var rectW = 375; rectH = 375;
+    var startX = 20 ; startY = 20 + rectH;
 
     translate((rectW/2), startY + (rectH/2) + 50); //set the new origin/point of rotation
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
@@ -578,7 +578,7 @@ class curve {
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var rectW = 335; rectH = 335;   //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
     rectMode(CORNER);
     fill(255);
@@ -626,7 +626,7 @@ function drawCurve(){
 //bounce circle to manipulate sound
 function drawBounceCircle(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var rectW = 335; rectH = 335;    //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner
     rectMode(CORNER);
     fill(255);
