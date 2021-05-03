@@ -83,6 +83,7 @@ class curve {
                 this.xAxis[i-1], sh+sy)
             //change sound direction
             var dir = map(this.xAxis[i], sx, sx+sw, -1.0,1.0);
+            panLevel = dir;
             sound.pan(dir);
             //change sound frequency
             var freq = map(this.yAxis[i], sy, sy+sh, 20, 20000);
@@ -111,7 +112,7 @@ class curve {
         this.animating = true;
         sound.play();
         sound.loop();
-    }s
+    }
 }
 
 //determine manipulation method
@@ -297,6 +298,8 @@ function drawVisualization2(parameter1, parameter2){
     }
 }
 
+var widthArray = []
+var sizeArray = []
 
 function drawEllipse() {
     angleMode(DEGREES)
@@ -405,7 +408,6 @@ function drawEllipse() {
 	endShape(CLOSE);
 }
 
-  //TO DO: FIX THESE
   function drawTriangle() {
     angleMode(RADIANS);
     var rectW = 375; rectH = 375;
@@ -509,8 +511,8 @@ function mouseReleased(){
 function drawCurve(){
     //draw canvas
 
-    curveRectW = displayHeight/3;
-    curveRectH = displayHeight/3;   //canvas width & height
+    curveRectW = 335;
+    curveRectH = 335;   //canvas width & height
     curveRectX = 20;
     curveRectY = 20;  //canvas upper left corner   //canvas upper left corner
     rectMode(CORNER);
@@ -551,16 +553,16 @@ function drawCurve(){
 
 }
 
-//draw a curve to manipulate sound
-function drawCurve(){
-    //draw canvas
-    var rectW = 335; rectH = 335;   //canvas width & height
-    var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
-    rectMode(CORNER);
-    fill(255);
-    stroke(255);
-    rect(startX, startY, rectW, rectH);
-
+// //draw a curve to manipulate sound
+// function drawCurve(){
+//     //draw canvas
+//     var rectW = 335; rectH = 335;   //canvas width & height
+//     var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
+//     rectMode(CORNER);
+//     fill(255);
+//     stroke(255);
+//     rect(startX, startY, rectW, rectH);
+// }
 //two bars to bounce off with
 class bar {
     constructor(x,y) {
@@ -785,7 +787,7 @@ function drawReverb(){
 function changeDirection(){
     if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
         panX = constrain(mouseX, sliderStart, sliderStop);
-        var dir = map(ellipseX, startX, startX+rectW, -1.0,1.0);
+        var dir = map(panX, sliderStart, sliderStop, -1.0,1.0);
         panLevel = dir;
         sound.pan(dir);
     }
@@ -832,4 +834,3 @@ function toggleSound() {
         }
     }
  }
-}
