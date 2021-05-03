@@ -20,89 +20,96 @@ var ellipseR = 25;
 var ellipseX = (window.innerHeight/6) + 20, ellipseY = (window.innerHeight/6) + 20;
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
-    //two bars to bounce off with
-class bar {
-    constructor(x,y) {
-        this.x = x;
-        this.y = y;
-        this.width = 20;
-        this.height = 120;
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.dragging = false;
-        this.haveBeenDragged = false;
+
+// var curveArray = [];
+
+//drawCurve variables
+var curveRectW;
+var curveRectH;
+var curveRectX;
+var curveRectY;
+var newCurve;
+var newCurveExist = false;
+class curve {
+    constructor(){
+        this.xAxis = [];
+        this.yAxis = [];
+        this.drawing = false;
+        this.animating = false;
+        this.frameCount = 0;
+        this.color = "lightblue"
     }
 
-    display(px, py, sx, sy, sw, sh){
-        if (this.dragging){
-            //move bar when dragging
-            this.x = this.offsetX + px;
-            this.y = this.offsetY + py;
+    saveCoordinates(){
+        if (this.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
+            append(this.xAxis, mouseX);
+            append(this.yAxis, mouseY);
         }
-        fill(125);
-        noStroke();
-        //constrain bar within canvas
-        this.x = constrain(this.x, sx, sx+sw-this.width);
-        this.y = constrain(this.y, sy, sy+sh-this.height);
-        //draw bar
-        rect(this.x, this.y, this.width, this.height);
+    }
+
+    display(sx, sy, sw, sh){
+        for (var i = 0; i < this.xAxis.length; i++){
+            quad(this.xAxis[i-1], this.yAxis[i-1],
+                this.xAxis[i], this.yAxis[i],
+                this.xAxis[i], sh+sy,
+                this.xAxis[i-1], sh+sy)
+        }
     }
 
     bounce(){
-        //determine which side of the bar to test
-        let testX = ellipseX, testY = ellipseY;
-        let testingX = false, testingY = false;
-        //test left bar
-        if (ellipseX < this.x){
-            testX = this.x;
-            testingX = true;
-            //test right bar
-        } else if(ellipseX > this.x + this.width){
-            testX = this.x + this.width;
-            testingX = true;
-        }
-        //test top bar
-        if (ellipseY < this.y){
-            testY = this.y;
-            testingY = true;
-            //test bottom bar
-        } else if (ellipseY > this.y + this.height){
-            testY = this.y + this.height;
-            testingY = true;
-        }
-        //calculate distance between testing side and circle center
-        let d = dist(ellipseX, ellipseY, testX, testY)
-        //collide at left / right side
-        if (d <= ellipseR && testingX == true){
-            ellipseDeltaX = -ellipseDeltaX;
-        }
-        //collide at top / bottom side
-        if (d <= ellipseR && testingY == true){
-            ellipseDeltaY = -ellipseDeltaY;
+        for (var i = 0; i < this.xAxis.length; i++){
+            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
+                ellipseDeltaX = -ellipseDeltaX;
+                ellipseDeltaY = -ellipseDeltaY;
+            }
         }
     }
 
-    drag(px, py){
-        //check if clicked within bar
-        if (px > this.x && px < this.x + this.width && py > this.y && py < this.y + this.height){
-            this.dragging = true;
-            this.haveBeenDragged = true;
-            //calculate distance between mouse and rect left corner
-            this.offsetX = this.x - px;
-            this.offsetY = this.y - py;
+    clickedWithinCanvas(sx, sy, sw, sh){
+        if (mouseX > sx && mouseX < sx+sw && mouseY > sy && mouseY < sy+sh){
+            return true;
         }
     }
+
+    animate(sx, sy, sw, sh){
+        for (var i = 0; i < this.frameCount; i++) {
+            fill(this.color);
+            quad(this.xAxis[i-1], this.yAxis[i-1],
+                this.xAxis[i], this.yAxis[i],
+                this.xAxis[i], sh+sy,
+                this.xAxis[i-1], sh+sy)
+            //change sound direction
+            var dir = map(this.xAxis[i], sx, sx+sw, -1.0,1.0);
+            sound.pan(dir);
+            //change sound frequency
+            var freq = map(this.yAxis[i], sy, sy+sh, 20, 20000);
+            freq = constrain(freq, 20, 20000);
+            filter.freq(freq);
+        }
+        //draw ball on animation
+        fill("skyblue");
+        ellipse(this.xAxis[this.frameCount], this.yAxis[this.frameCount], 10);
+        this.frameCount += 1;
+        if (this.frameCount == this.xAxis.length) {
+            this.animating = false;
+        }
+
+    }
+
+    draw(){
+        this.drawing = true;
+        if (sound.isPlaying() ){
+            sound.stop();
+        }
+    }
+
     released(){
-        this.dragging = false;
-    }
+        this.drawing = false;
+        this.animating = true;
+        sound.play();
+        sound.loop();
+    }s
 }
-
-var bar1 = new bar(0,0);
-var bar2 = new bar(0, 0);
-// var curveArray = [];
-
-
-
 
 //determine manipulation method
 var sliderButtonClicked = false;
@@ -146,10 +153,6 @@ function setup() {
 }
 
 function draw() {
-    //to make drawCurve work, move "background(0)" to function "setup()";
-    //otherwise background will cover the line we draw
-    //but if we move "background(0)" to function "setup()", the other functions won't work
-    //might have to write "drawCurve in another js doc
     background(0);
 
     //click "PlaySound" to play/pause audio
@@ -382,16 +385,12 @@ function mousePressed(){
     if (drawCurveButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
-        newCurve.draw();
-        toggleSound();
-        newCurve.clear();
+        if (newCurve.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
+            newCurve.draw();
+        }
+
     }
 }
-
-// function mouseDragged(){
-//     console.log("hi")
-//     newCurve.saveCoordinates();
-// }
 
 function mouseReleased(){
     if (bounceCircleButtonClicked == true){
@@ -399,124 +398,137 @@ function mouseReleased(){
         bar2.released();
     }
     if (drawCurveButtonClicked == true){
-        newCurve.released();
-        toggleSound();
-    }
-}
-
-//drawCurve variables
-var newCurve;
-var newCurveExist = false;
-class curve {
-    constructor(){
-        this.xAxis = [];
-        this.yAxis = [];
-        this.drawing = false;
-        this.frameCount = 0;
-        this.animating = false;
-        this.volume = 0;
-        this.freq = 0;
-    }
-
-    saveCoordinates(){
-        append(this.xAxis, mouseX);
-        append(this.yAxis, mouseY);
-        //this.frameCount += 1;
-    }
-
-    display(sx, sy, sw, sh){
-        for (var i = 0; i < this.xAxis.length; i++){
-            strokeWeight(3);
-            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i], this.yAxis[i]);
-            //line(this.xAxis[i-1], this.yAxis[i-1], this.xAxis[i-1], sh+sy);
-            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sh+sy);
+        if (newCurve.drawing){
+            newCurve.released();
         }
     }
-
-    bounce(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
-                ellipseDeltaX = -ellipseDeltaX;
-                ellipseDeltaY = -ellipseDeltaY;
-            }
-        }
-    }
-
-    animate(sx, sy, sw, sh){
-        for (var i = 0; i < this.frameCount; i++) {
-            stroke(0);
-            line(this.xAxis[i], this.yAxis[i], this.xAxis[i], sy + sh);
-        }
-        this.frameCount += 1;
-
-    }
-
-    draw(){
-        this.drawing = true;
-    }
-
-    released(){
-        this.drawing = false;
-        this.animating = true;
-    }
-
-    clear(){
-        this.xAxis = [];
-        this.volume = 0;
-        this.yAxis = [];
-        this.freq = 0;
-        this.frameCount = 0;
-    }
-
 }
 
 //draw a curve to manipulate sound
 function drawCurve(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
-    var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
+
+    curveRectW = displayHeight/3;
+    curveRectH = displayHeight/3;   //canvas width & height
+    curveRectX = 20;
+    curveRectY = 20;  //canvas upper left corner   //canvas upper left corner
     rectMode(CORNER);
     fill(255);
-    stroke(255);
-    rect(startX, startY, rectW, rectH);
+    noStroke();
+    rect(curveRectX, curveRectY, curveRectW, curveRectH);
 
     if (newCurveExist == true){
-        if (newCurve.drawing) {
-            //as mouse is dragging to draw, add x and y coordinates to list
-            if (mouseX > startX && mouseX < startX+rectH && mouseY > startY && mouseY < startY+rectH){
+            if (newCurve.drawing) {
+                //as mouse is dragging to draw, add x and y coordinates to list
                 newCurve.saveCoordinates();
+                fill(newCurve.color);
+            } else if (!(newCurve.animating)){
+                fill(newCurve.color);
+            } else {
+                fill("lightgrey");
             }
-            stroke(0);
-        } else{
-            stroke(125);
-        }
-        newCurve.display(startX, startY, rectW, rectH);
+            newCurve.display(curveRectX, curveRectY, curveRectW, curveRectH);
 
-        if (newCurve.animating){
-            newCurve.animate(startX, startY, rectW, rectH);
-        }
+            if (newCurve.animating){
+                newCurve.animate(curveRectX, curveRectY, curveRectW, curveRectH);
+            }
 
-        //calculate sum of x and y coordinates in the list
-        for (var i = 0; i <newCurve.xAxis.length ; i++){
-            newCurve.volume += newCurve.xAxis[i];
-            newCurve.freq += newCurve.yAxis[i];
-        }
+            /*
+            //calculate sum of x and y coordinates in the list
+            for (var i = 0; i <newCurve.xAxis.length ; i++){
+                newCurve.volume += newCurve.xAxis[i];
+                newCurve.freq += newCurve.yAxis[i];
+            }
+            newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
+            newCurve.freq = constrain(newCurve.freq,20,20000);
+            filter.freq(newCurve.freq);
 
-        /*
-        //change direction
-        for (var i = 0; i <newCurve.xAxis.length ; i++){
-            let level = map(newCurve.xAxis[i], startX, startX + rectW, -1.0,1.0);
-            sound.pan(level);
-        }
-        //change frequency
-        newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
-        newCurve.freq = constrain(newCurve.freq,20,20000);
-        filter.freq(newCurve.freq);
-         */
+             */
+
     }
 
 
 }
+
+
+//two bars to bounce off with
+class bar {
+    constructor(x,y) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 120;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        this.dragging = false;
+        this.haveBeenDragged = false;
+    }
+
+    display(px, py, sx, sy, sw, sh){
+        if (this.dragging){
+            //move bar when dragging
+            this.x = this.offsetX + px;
+            this.y = this.offsetY + py;
+        }
+        fill(125);
+        noStroke();
+        //constrain bar within canvas
+        this.x = constrain(this.x, sx, sx+sw-this.width);
+        this.y = constrain(this.y, sy, sy+sh-this.height);
+        //draw bar
+        rect(this.x, this.y, this.width, this.height);
+    }
+
+    bounce(){
+        //determine which side of the bar to test
+        let testX = ellipseX, testY = ellipseY;
+        let testingX = false, testingY = false;
+        //test left bar
+        if (ellipseX < this.x){
+            testX = this.x;
+            testingX = true;
+            //test right bar
+        } else if(ellipseX > this.x + this.width){
+            testX = this.x + this.width;
+            testingX = true;
+        }
+        //test top bar
+        if (ellipseY < this.y){
+            testY = this.y;
+            testingY = true;
+            //test bottom bar
+        } else if (ellipseY > this.y + this.height){
+            testY = this.y + this.height;
+            testingY = true;
+        }
+        //calculate distance between testing side and circle center
+        let d = dist(ellipseX, ellipseY, testX, testY)
+        //collide at left / right side
+        if (d <= ellipseR && testingX == true){
+            ellipseDeltaX = -ellipseDeltaX;
+        }
+        //collide at top / bottom side
+        if (d <= ellipseR && testingY == true){
+            ellipseDeltaY = -ellipseDeltaY;
+        }
+    }
+
+    drag(px, py){
+        //check if clicked within bar
+        if (px > this.x && px < this.x + this.width && py > this.y && py < this.y + this.height){
+            this.dragging = true;
+            this.haveBeenDragged = true;
+            //calculate distance between mouse and rect left corner
+            this.offsetX = this.x - px;
+            this.offsetY = this.y - py;
+        }
+    }
+    released(){
+        this.dragging = false;
+    }
+}
+var bar1 = new bar(0,0);
+var bar2 = new bar(0, 0);
 
 //bounce circle to manipulate sound
 function drawBounceCircle(){
@@ -527,21 +539,6 @@ function drawBounceCircle(){
     fill(255);
     stroke(255);
     rect(startX, startY, rectW, rectH);
-/*
-    //draw curve
-    if (mouseIsPressed === true) {
-        //as mouse is dragging to draw, add x and y coordinates to array
-        curveArray[curveArray.length-1].saveCoordinates();
-    }
-    stroke(0);
-    strokeWeight(3);
-    for (var i = 0; i < curveArray.length; i++){
-        curveArray[i].display();
-        curveArray[i].bounce();
-        let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
-        reverb.drywet(dryWet);
-    }
- */
 
     //draw bar
     if (bar1.haveBeenDragged == false){
@@ -578,13 +575,29 @@ function drawBounceCircle(){
         ellipseDeltaY = -ellipseDeltaY;
     }
     //change direction
-    let level = map(ellipseX, startX, startX+rectW, -1.0,1.0);
-    sound.pan(level);
+    var dir = map(ellipseX, startX, startX+rectW, -1.0,1.0);
+    sound.pan(dir);
 
     //change frequency
     var freq = map (ellipseY, startY, startY + rectH, 20,20000);
     freq = constrain(freq,20,20000);
     filter.freq(freq);
+
+    /*
+    //draw curve
+    if (mouseIsPressed === true) {
+        //as mouse is dragging to draw, add x and y coordinates to array
+        curveArray[curveArray.length-1].saveCoordinates();
+    }
+    stroke(0);
+    strokeWeight(3);
+    for (var i = 0; i < curveArray.length; i++){
+        curveArray[i].display();
+        curveArray[i].bounce();
+        let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
+        reverb.drywet(dryWet);
+    }
+ */
 
 }
 
@@ -692,8 +705,10 @@ function toggleSound() {
         //stop sound
         sound.stop();
         //bounce circle - stop circle
-        ellipseDeltaX = 0;
-        ellipseDeltaY = 0;
+        if (bounceCircleButtonClicked == true){
+            ellipseDeltaX = 0;
+            ellipseDeltaY = 0;
+        }
     } else {
         //play sound
         sound.play();
