@@ -831,4 +831,5 @@ function toggleSound() {
             ellipseDeltaY = random(-5, 5);
         }
     }
+    }
 }
