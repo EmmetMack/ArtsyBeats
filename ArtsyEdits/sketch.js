@@ -553,16 +553,6 @@ function drawCurve(){
 
 }
 
-// //draw a curve to manipulate sound
-// function drawCurve(){
-//     //draw canvas
-//     var rectW = 335; rectH = 335;   //canvas width & height
-//     var startX = 20; startY = 20;  //canvas upper left corner   //canvas upper left corner
-//     rectMode(CORNER);
-//     fill(255);
-//     stroke(255);
-//     rect(startX, startY, rectW, rectH);
-// }
 //two bars to bounce off with
 class bar {
     constructor(x,y) {
