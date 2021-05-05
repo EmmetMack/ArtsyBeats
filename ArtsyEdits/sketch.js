@@ -10,9 +10,9 @@ var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
 //TO-DO:
-// set global rectW and rectH for visualizations and start x and y based on the screen size
-// change style, add in visualization images as the buttons for them
-// add faux submit button, maybe a screen that pops up saying submitted
+// set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
+// change style, add in visualization images as the buttons for them    
+// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added 
 
 var rectW = 375; 
 var rectH = 375; //= 375; = 375
