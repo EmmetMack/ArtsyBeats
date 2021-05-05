@@ -9,6 +9,16 @@ var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
+//TO-DO:
+// set global rectW and rectH for visualizations and start x and y based on the screen size
+// change style, add in visualization images as the buttons for them
+// add faux submit button, maybe a screen that pops up saying submitted
+
+var rectW = 375; 
+var rectH = 375; //= 375; = 375
+var startX; 
+var startY; //= 20 20 + rectH
+
 var panLevel = 1;
 
 //scale everything off displayheight + width
@@ -136,10 +146,24 @@ function preload() {
 }
 
 function windowResize() {
+    console.log("window resized")
     resizeCanvas(displayWidth, displayHeight);
     redraw();
+    setVisualizationPosition()
 };
-  
+
+function setVisualizationPosition() {
+    console.log(displayWidth);
+    if (displayWidth < 500) { 
+        startX = 0;
+        startY = 20 + rectH;
+    } else {
+        startX = 375;
+        startY = 20;
+    }
+}
+
+window.addEventListener('load', setVisualizationPosition);
 window.addEventListener('resize', windowResize);
 
 function setup() {
@@ -264,10 +288,17 @@ function drawVisualization1() {
     stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
-    translate(width / 2, 2*height / 3 + 50);
+    translate(startX + (rectW/2), startY + (rectH/2));
     for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
-        LimMouseX = constrain(drawLine*2, 0, width-20);
-        var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
+        if (width > 500) {
+            LimMouseX = constrain(drawLine*2, 0, startX + rectW);
+            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(drawLine*2, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+        // LimMouseX = constrain(drawLine*2, 0, width-20);
+        // var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
         var theta = map(i, 0, drawLine*2, 20, 360);
         var x = 2 * a * cos(theta) + a * cos(2 * theta);
         var y = 2 * a * sin(theta) - a * sin(2 * theta);
@@ -287,8 +318,14 @@ function drawVisualization2(parameter1, parameter2){
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
-        LimMouseX = constrain(parameter1, 0, width-20);
-        var a = map(LimMouseX, 0, width-20, 0, 60); //relate to mouseX
+        if (width > 500) {
+            LimMouseX = constrain(parameter1, 0, startX + rectW);
+            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(parameter1, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+        
         var theta = map(i, 0, parameter1/5, 20, 360);
         var b = map(parameter2, 0, height, 0, 50);
         var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
@@ -303,10 +340,10 @@ var sizeArray = []
 
 function drawEllipse() {
     angleMode(DEGREES)
-    var rectW = 375; rectH = 375;
-    var startX = 20 ; startY = 20 + rectH;
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
 
-    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
    
 
     let spectrum = fft.analyze()
@@ -377,10 +414,10 @@ function drawEllipse() {
 
   function drawRect() {
     angleMode(DEGREES)
-    var rectW = 375; rectH = 375;
-    var startX = 20 ; startY = 20 + rectH;
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
     rectMode(CENTER)
-    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
@@ -410,10 +447,10 @@ function drawEllipse() {
 
   function drawTriangle() {
     angleMode(RADIANS);
-    var rectW = 375; rectH = 375;
-    var startX = 20 ; startY = 20 + rectH;
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
 
-    translate((rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
     // angle = angle + 1;
     
@@ -448,10 +485,10 @@ function drawEllipse() {
 
   function drawRandom() {
     angleMode(RADIANS);
-    var rectW = 375; rectH = 375;
-    var startX = 20 ; startY = 20 + rectH;
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
 
-    translate((rectW/2), startY + (rectH/2) + 50); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)+ 50); //set the new origin/point of rotation
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
     // angle = angle + 1;
