@@ -1,3 +1,10 @@
+.container-fluid{
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-right: 150px;
+    margin-left: 150px;
+}
+
 h3 {
     color: white;
 }
@@ -10,6 +17,36 @@ h1 {
     color: white;
 }
 
+<<<<<<< Updated upstream
+=======
+hr {
+    border-top: 10px;
+    border-radius: 10px;
+    /*width: 100%;*/
+    height: 10px;
+    /*border:none;*/
+    /*margin-bottom: 7px;*/
+    /*margin-right: auto;*/
+    /*margin-left: auto;*/
+    /*margin-top: 9px;*/
+    /*border-width: 10px;*/
+    /*border-top: 10px;*/
+    border-color: blue;
+}
+
+#primaryButtonBox{
+    display: inline-block;
+    position: absolute;
+    right: 5%;
+    top: 10%;
+
+}
+
+.primaryButton{
+
+}
+
+>>>>>>> Stashed changes
 button {
     border-radius: 5px;
     margin: 2px;
@@ -29,6 +66,14 @@ button {
    border: 2px solid #5954A4;
 }
 
+<<<<<<< Updated upstream
+=======
+.visualizationBox, .manipulationBox{
+    display: inline-block;
+    float: left;
+}
+
+>>>>>>> Stashed changes
 
 @media only screen and (min-width: 1490px)
 {
