@@ -25,6 +25,10 @@ button {
     font-family: Monoton;
 }
 
+.visualizationButtons img {
+   border: 2px solid #5954A4;
+}
+
 
 @media only screen and (min-width: 1490px)
 {
@@ -40,15 +44,25 @@ button {
 }
 @media only screen and (max-width: 1024px) and (min-width: 768px) 
 {
-    img {
+    #titleImage  {
         width: 100%;
         height: auto;
     }
+
+     .visualizationButtons img {
+         width: auto;
+         height: auto;
+     }
 }
 @media only screen and (max-width: 768px) and (min-width: 375px) 
 {
-    img {
+    #titleImage {
         width: 100%;
+        height: auto;
+    }
+
+    .visualizationButtons img {
+        width: auto;
         height: auto;
     }
 }

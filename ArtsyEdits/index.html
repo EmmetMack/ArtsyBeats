@@ -27,7 +27,7 @@
   <div class = "container-fluid">
     <div class = 'row d-flex justify-content-center'>
       <div class = "col-xs-12">
-        <img src="assets/title_image.png"/>
+        <img src="assets/title_image.png" id ="titleImage"/>
       </div>
     </div>
     <div class = "row d-flex justify-content-center">
@@ -40,14 +40,20 @@
       </div>
     </div>
     <div class = "row d-flex justify-content-center">
-      <div class ="col-xs-12">
+      <div class ="col-xs-12 visualizationButtons">
         <!-- <img src="assets/button.png" alt="Visualization buttons" width="595" height="62"> -->
         <h3>Select Visualization:</h3>
-        <button type="button" id="rectangleButton">Rectangle</button>
+        <!-- <button type="button" id="rectangleButton">Rectangle</button>
         <button type="button" id="ellipseButton">Ellipse</button>
         <button type="button" id="triangleButton">Trangle</button>
         <button type="button" id="randomButton">Random Shape</button>
-        <button type="button" id="visualizationButton">Visualization</button>
+        <button type="button" id="visualizationButton">Visualization</button> -->
+        <img src="assets/rectangle_visualization.png" id="rectangleButton"/>
+        <img src = "assets/ellipse_visualization.png" id="ellipseButton"/>
+        <img src = "assets/triangle_visualization.png" id = "triangleButton"/>
+        <img src="assets/random_visualization.png" id="randomButton"/>
+        <img src="assets/circles_visualization.png" id ="visualizationButton"/>
+
         <h1 style="color:white;" id="countdown"></h1>
 
         <label for="lineColor">Change the color for your visualization</label>

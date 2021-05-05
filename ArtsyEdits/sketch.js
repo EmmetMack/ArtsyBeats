@@ -147,8 +147,8 @@ function preload() {
 
 function windowResize() {
     console.log("window resized")
-    resizeCanvas(displayWidth, displayHeight);
-    redraw();
+    // resizeCanvas(displayWidth, displayHeight, true);
+
     setVisualizationPosition()
 };
 
