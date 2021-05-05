@@ -12,26 +12,12 @@ var sliderBallRadius = 10;
 //TO-DO:
 // set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
 // change style, add in visualization images as the buttons for them    
-<<<<<<< Updated upstream
 // add faux submit button, maybe a screen that pops up saying submitted - easy change, think added 
 
 var rectW = 375; 
 var rectH = 375; //= 375; = 375
 var startX; 
 var startY; //= 20 20 + rectH
-=======
-// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
-
-var rectW = 375; 
-var rectH = 375; //= 375; = 375
-var rectX = 20;
-var rectY = 20; //= 20 20 + rectH
-
-var vizW = 375;
-var vizH = 375;
-var vizX = 20;
-var vizY = 20;
->>>>>>> Stashed changes
 
 var panLevel = 1;
 
@@ -44,17 +30,17 @@ var angle = 0;
 
 //BounceCircle variables
 var ellipseR = 25;
-<<<<<<< Updated upstream
 var ellipseX = 20 + (335/2), ellipseY = (335/2) + 20;
-=======
-var ellipseX = rectX + rectW/2, ellipseY = rectY + rectH/2;
->>>>>>> Stashed changes
     //ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
 
 // var curveArray = [];
 
 //drawCurve variables
+var curveRectW;
+var curveRectH;
+var curveRectX;
+var curveRectY;
 var newCurve;
 var newCurveExist = false;
 class curve {
@@ -68,7 +54,7 @@ class curve {
     }
 
     saveCoordinates(){
-        if (this.clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+        if (this.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
             append(this.xAxis, mouseX);
             append(this.yAxis, mouseY);
         }
@@ -141,8 +127,8 @@ class curve {
 
 //determine manipulation method
 var sliderButtonClicked = false;
-var bounceCircleButtonClicked = true;
-var drawCurveButtonClicked = false;
+var bounceCircleButtonClicked = false;
+var drawCurveButtonClicked = true;
 
 //determine visualization
 var drawRectClicked = true;
@@ -160,7 +146,6 @@ function preload() {
 }
 
 function windowResize() {
-<<<<<<< Updated upstream
     console.log("window resized")
     // resizeCanvas(displayWidth, displayHeight, true);
 
@@ -175,24 +160,6 @@ function setVisualizationPosition() {
     } else {
         startX = 375;
         startY = 20;
-=======
-    // resizeCanvas(displayWidth, displayHeight, true);
-
-    setVisualizationPosition()
-}
-
-function setVisualizationPosition() {
-    if (displayWidth < 500) { 
-        rectX = 0;
-        rectY = 20 + rectH;
-        ellipseX = rectX + rectW/2;
-        ellipseY = rectY + rectH/2;
-    } else {
-        rectX = 375;
-        rectY = 20;
-        ellipseX = rectX + rectW/2;
-        ellipseY = rectY + rectH/2;
->>>>>>> Stashed changes
     }
 }
 
@@ -217,6 +184,7 @@ function setup() {
 
 function draw() {
     background(0);
+
     //click "PlaySound" to play/pause audio
     document.getElementById('soundButton').onclick = function() {
         toggleSound();
@@ -320,19 +288,11 @@ function drawVisualization1() {
     stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
-<<<<<<< Updated upstream
     translate(startX + (rectW/2), startY + (rectH/2));
     for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
         if (width > 500) {
             LimMouseX = constrain(drawLine*2, 0, startX + rectW);
             var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
-=======
-    translate(vizX + (vizW/2), vizY + (vizH/2));
-    for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
-        if (width > 500) {
-            LimMouseX = constrain(drawLine*2, 0, vizX + vizW);
-            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
->>>>>>> Stashed changes
         } else {
             LimMouseX = constrain(drawLine*2, 0, width-20);
             var a = map(LimMouseX, 0, width-20, 0, 60);
@@ -359,13 +319,8 @@ function drawVisualization2(parameter1, parameter2){
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
         if (width > 500) {
-<<<<<<< Updated upstream
             LimMouseX = constrain(parameter1, 0, startX + rectW);
             var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
-=======
-            LimMouseX = constrain(parameter1, 0, vizX + vizW);
-            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
->>>>>>> Stashed changes
         } else {
             LimMouseX = constrain(parameter1, 0, width-20);
             var a = map(LimMouseX, 0, width-20, 0, 60);
@@ -382,7 +337,6 @@ function drawVisualization2(parameter1, parameter2){
 
 var widthArray = []
 var sizeArray = []
-<<<<<<< Updated upstream
 
 function drawEllipse() {
     angleMode(DEGREES)
@@ -392,15 +346,6 @@ function drawEllipse() {
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
    
 
-=======
-
-function drawEllipse() {
-    angleMode(DEGREES)
-
-    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
-   
-
->>>>>>> Stashed changes
     let spectrum = fft.analyze()
     
     widthFreq = spectrum[0]
@@ -411,11 +356,7 @@ function drawEllipse() {
         widthArray.push(widthFreq)
     }
     level = amplitude.getLevel()
-<<<<<<< Updated upstream
     let size = map(level, 0, 1, 0, rectH);
-=======
-    let size = map(level, 0, 1, 0, vizH);
->>>>>>> Stashed changes
     if (sizeArray.length == 5) {
         let sizeIndex = Math.floor(Math.random() * 5)
          sizeArray[sizeIndex] = size
@@ -473,19 +414,16 @@ function drawEllipse() {
 
   function drawRect() {
     angleMode(DEGREES)
-<<<<<<< Updated upstream
     // var rectW = 375; rectH = 375;
     // var startX = 20 ; startY = 20 + rectH;
-=======
->>>>>>> Stashed changes
     rectMode(CENTER)
-    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
+    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
     angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, vizH);
+    let size = map(level, 0, 1, 0, rectH);
     noFill()
     stroke(visualizationColor)
     strokeWeight(5)
@@ -506,7 +444,6 @@ function drawEllipse() {
 	}
 	endShape(CLOSE);
 }
-<<<<<<< Updated upstream
 
   function drawTriangle() {
     angleMode(RADIANS);
@@ -514,24 +451,13 @@ function drawEllipse() {
     // var startX = 20 ; startY = 20 + rectH;
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-=======
-
-  function drawTriangle() {
-    angleMode(RADIANS);
-
-    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
->>>>>>> Stashed changes
     // rotate(angle);
     // angle = angle + 1;
     
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-<<<<<<< Updated upstream
     let size = map(level, 0, 1, 0, rectH);
-=======
-    let size = map(level, 0, 1, 0, vizH);
->>>>>>> Stashed changes
 
     pieces = 20;
 
@@ -553,7 +479,6 @@ function drawEllipse() {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 } 
-<<<<<<< Updated upstream
 
   let sides = randomNumber(4, 15);
 
@@ -565,28 +490,13 @@ function drawEllipse() {
 
     translate(startX + (rectW/2), startY + (rectH/2)+ 50); //set the new origin/point of rotation
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-=======
-
-  let sides = randomNumber(4, 15);
-
-
-  function drawRandom() {
-    angleMode(RADIANS);
-
-    translate(vizX + (vizW/2), vizY + (vizH/2)+ 50); //set the new origin/point of rotation
-    // translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
->>>>>>> Stashed changes
     // rotate(angle);
     // angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
-<<<<<<< Updated upstream
     let size = map(level, 0, 1, 0, rectH);
-=======
-    let size = map(level, 0, 1, 0, vizH);
->>>>>>> Stashed changes
 
     pieces = panLevel + 1;
 
@@ -604,7 +514,7 @@ function drawEllipse() {
   }
 
 function mousePressed(){
-    //drag bars
+    //create a new curve and append to curveArray
     if (bounceCircleButtonClicked == true){
         bar1.drag(mouseX, mouseY);
         bar2.drag(mouseX, mouseY);
@@ -615,7 +525,7 @@ function mousePressed(){
     if (drawCurveButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
-        if (newCurve.clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+        if (newCurve.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
             newCurve.draw();
         }
 
@@ -636,19 +546,16 @@ function mouseReleased(){
 
 //draw a curve to manipulate sound
 function drawCurve(){
-<<<<<<< Updated upstream
     //draw canvas
 
     curveRectW = 335;
     curveRectH = 335;   //canvas width & height
     curveRectX = 20;
     curveRectY = 20;  //canvas upper left corner   //canvas upper left corner
-=======
->>>>>>> Stashed changes
     rectMode(CORNER);
     fill(255);
     noStroke();
-    rect(rectX, rectY, rectW, rectH);
+    rect(curveRectX, curveRectY, curveRectW, curveRectH);
 
     if (newCurveExist == true){
             if (newCurve.drawing) {
@@ -660,10 +567,10 @@ function drawCurve(){
             } else {
                 fill("lightgrey");
             }
-            newCurve.display(rectX, rectY, rectW, rectH);
+            newCurve.display(curveRectX, curveRectY, curveRectW, curveRectH);
 
             if (newCurve.animating){
-                newCurve.animate(rectX, rectY, rectW, rectH);
+                newCurve.animate(curveRectX, curveRectY, curveRectW, curveRectH);
             }
 
             /*
@@ -677,6 +584,7 @@ function drawCurve(){
             filter.freq(newCurve.freq);
 
              */
+
     }
 
 
@@ -763,28 +671,25 @@ var bar2 = new bar(0, 0);
 
 //bounce circle to manipulate sound
 function drawBounceCircle(){
-<<<<<<< Updated upstream
     //draw canvas
     var rectW = 335; rectH = 335;    //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner
-=======
->>>>>>> Stashed changes
     rectMode(CORNER);
     fill(255);
-    noStroke();
-    rect(rectX, rectY, rectW, rectH);
+    stroke(255);
+    rect(startX, startY, rectW, rectH);
 
     //draw bar
     if (bar1.haveBeenDragged == false){
-        bar1.x = rectX + 50;
-        bar1.y = rectY + 50;
+        bar1.x = startX + 50;
+        bar1.y = startY + 50;
     }
     if (bar2.haveBeenDragged == false){
-        bar2.x = rectX + rectW - bar2.width - 50;
-        bar2.y = rectY + rectH - bar2.height - 50;
+        bar2.x = startX + rectW - bar2.width - 50;
+        bar2.y = startY + rectH - bar2.height - 50;
     }
-    bar1.display(mouseX, mouseY, rectX, rectY, rectW, rectH);
-    bar2.display(mouseX, mouseY, rectX, rectY, rectW, rectH);
+    bar1.display(mouseX, mouseY, startX, startY, rectW, rectH);
+    bar2.display(mouseX, mouseY, startX, startY, rectW, rectH);
     bar1.bounce();
     bar2.bounce();
 
@@ -797,28 +702,24 @@ function drawBounceCircle(){
     ellipseX += ellipseDeltaX;
     ellipseY += ellipseDeltaY;
 
-    if (ellipseX > rectX + rectW - ellipseR){
+    if (ellipseX > startX + rectW - ellipseR){
         ellipseDeltaX = -ellipseDeltaX;
-    } else if (ellipseX < rectX + ellipseR){
+    } else if (ellipseX < startX + ellipseR){
         ellipseDeltaX = -ellipseDeltaX;
     }
 
-    if (ellipseY > rectY + rectH - ellipseR){
+    if (ellipseY > startY + rectH - ellipseR){
         ellipseDeltaY = -ellipseDeltaY;
-    } else if (ellipseY < rectY + ellipseR){
+    } else if (ellipseY < startY + ellipseR){
         ellipseDeltaY = -ellipseDeltaY;
     }
     //change direction
-<<<<<<< Updated upstream
     var dir = map(ellipseX, startX, startX+rectW, -1.0,1.0);
-=======
-    var dir = map(ellipseX, rectX, rectX+rectW, -1.0,1.0);
->>>>>>> Stashed changes
     panLevel = dir;
     sound.pan(dir);
 
     //change frequency
-    var freq = map (ellipseY, rectY, rectY + rectH, 20,20000);
+    var freq = map (ellipseY, startY, startY + rectH, 20,20000);
     freq = constrain(freq,20,20000);
     filter.freq(freq);
 
@@ -833,7 +734,7 @@ function drawBounceCircle(){
     for (var i = 0; i < curveArray.length; i++){
         curveArray[i].display();
         curveArray[i].bounce();
-        let dryWet = constrain(map(ellipseX, rectX, rectX+rectW, 0, 1), 0, 1);
+        let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
         reverb.drywet(dryWet);
     }
  */
@@ -854,6 +755,8 @@ function drawSliders(){
         changeFrequency();
         changeReverb();
     }
+    //visualize
+    // visualizeSliders();
 }
 
 //draw visualization corresponding to slider values
@@ -952,7 +855,9 @@ function toggleSound() {
         sound.play();
         sound.loop();
         //bounce circle - move circle with a random direction & velocity
-        ellipseDeltaX = random(-5, 5);
-        ellipseDeltaY = random(-5, 5);
+        if (bounceCircleButtonClicked == true){
+            ellipseDeltaX = random(-5, 5);
+            ellipseDeltaY = random(-5, 5);
+        }
     }
  }
