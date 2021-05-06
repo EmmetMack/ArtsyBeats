@@ -2,6 +2,67 @@ h3 {
     color: white;
 }
 
-label { 
+label {
     color: white;
+}
+
+h1 {
+    color: white;
+}
+
+button {
+    border-radius: 5px;
+    margin: 2px;
+    padding: 5px;
+    background: #5954A4;
+    background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+    background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+    background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
+    color: white;
+}
+
+#title {
+    font-family: Monoton;
+}
+
+.visualizationButtons img {
+    border: 2px solid #5954A4;
+}
+
+
+@media only screen and (min-width: 1490px)
+{
+}
+@media only screen and (max-width: 1490px) and (min-width: 1366px)
+{
+}
+@media only screen and (max-width: 1366px) and (min-width: 1280px)
+{
+}
+@media only screen and (max-width: 1280px) and (min-width: 1024px)
+{
+}
+@media only screen and (max-width: 1024px) and (min-width: 768px)
+{
+    #titleImage  {
+        width: 100%;
+        height: auto;
+    }
+
+    .visualizationButtons img {
+        width: auto;
+        height: auto;
+    }
+}
+@media only screen and (max-width: 768px) and (min-width: 375px)
+{
+    #titleImage {
+        width: 100%;
+        height: auto;
+    }
+
+    .visualizationButtons img {
+        width: auto;
+        height: auto;
+    }
 }

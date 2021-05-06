@@ -3,13 +3,26 @@ var sound, amplitude, frequency, fft;
 //slider variables
 var sliderLength = 355
 var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
-    //ball on the slider
+//ball on the slider
 var panX = 20, panY = 75;
-var frequencyX = 20, frequencyY = 200;
-var reverbX = 20, reverbY = 350;
+var frequencyX = 20, frequencyY = 175;
+var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 10;
 
+//TO-DO:
+// set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
+// change style, add in visualization images as the buttons for them
+// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
+
+var rectW = 375;
+var rectH = 375; //= 375; = 375
+var startX;
+var startY; //= 20 20 + rectH
+
+var panLevel = 1;
+
 //scale everything off displayheight + width
+
 var visualizationColor;
 
 //angle for rotating the shape
@@ -17,8 +30,8 @@ var angle = 0;
 
 //BounceCircle variables
 var ellipseR = 25;
-var ellipseX = (window.innerHeight/6) + 20, ellipseY = (window.innerHeight/6) + 20;
-    //ellipse velocity
+var ellipseX = 20 + (335/2), ellipseY = (335/2) + 20;
+//ellipse velocity
 var ellipseDeltaX = 0; ellipseDeltaY = 0;
 
 // var curveArray = [];
@@ -80,6 +93,7 @@ class curve {
                 this.xAxis[i-1], sh+sy)
             //change sound direction
             var dir = map(this.xAxis[i], sx, sx+sw, -1.0,1.0);
+            panLevel = dir;
             sound.pan(dir);
             //change sound frequency
             var freq = map(this.yAxis[i], sy, sy+sh, 20, 20000);
@@ -108,7 +122,7 @@ class curve {
         this.animating = true;
         sound.play();
         sound.loop();
-    }s
+    }
 }
 
 //determine manipulation method
@@ -121,7 +135,7 @@ var drawRectClicked = true;
 var drawEllipseClicked = false;
 var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
-var drawQuadClicked = false;
+var drawRandomClicked = false;
 
 var canvas;
 
@@ -132,14 +146,30 @@ function preload() {
 }
 
 function windowResize() {
-    resizeCanvas(displayWidth, displayHeight);
-    redraw();
+    console.log("window resized")
+    // resizeCanvas(displayWidth, displayHeight, true);
+
+    setVisualizationPosition()
 };
 
+function setVisualizationPosition() {
+    console.log(displayWidth);
+    if (displayWidth < 500) {
+        startX = 0;
+        startY = 20 + rectH;
+    } else {
+        startX = 375;
+        startY = 20;
+    }
+}
+
+window.addEventListener('load', setVisualizationPosition);
 window.addEventListener('resize', windowResize);
 
 function setup() {
+
     angleMode(DEGREES);
+    // createCanvas(1500,700);
     createCanvas(displayWidth, displayHeight);
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
@@ -183,7 +213,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -191,7 +221,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = true;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('triangleButton').onclick = function() {
@@ -199,15 +229,15 @@ function draw() {
         drawTriangleClicked = true;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
-    document.getElementById('quadirlateralButton').onclick = function() {
+    document.getElementById('randomButton').onclick = function() {
         drawRectClicked = false;
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
-        drawQuadClicked = true;
+        drawRandomClicked = true;
     }
 
     document.getElementById('visualizationButton').onclick = function() {
@@ -215,7 +245,7 @@ function draw() {
         drawTriangleClicked = false;
         drawEllipseClicked = false;
         drawVisualizationClicked = true;
-        drawQuadClicked = false;
+        drawRandomClicked = false;
     }
 
     document.getElementById('lineColor').onchange = function() {
@@ -241,13 +271,14 @@ function draw() {
     } else if (drawEllipseClicked == true) {
         drawEllipse();
     } else {
-        drawQuad();
+        drawRandom();
     }
 }
 
 
 //math equations to draw one visualization
 function drawVisualization1() {
+    angleMode(DEGREES)
     //get&map amplitude
     var ampLevel = amplitude.getLevel();
     var drawLine = map(ampLevel, 0, 0.1, 100, 800);
@@ -257,10 +288,17 @@ function drawVisualization1() {
     stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
-    translate(width / 2, 2*height / 3 + 50);
+    translate(startX + (rectW/2), startY + (rectH/2));
     for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
-        LimMouseX = constrain(drawLine*2, 0, width-20);
-        var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
+        if (width > 500) {
+            LimMouseX = constrain(drawLine*2, 0, startX + rectW);
+            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(drawLine*2, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+        // LimMouseX = constrain(drawLine*2, 0, width-20);
+        // var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
         var theta = map(i, 0, drawLine*2, 20, 360);
         var x = 2 * a * cos(theta) + a * cos(2 * theta);
         var y = 2 * a * sin(theta) - a * sin(2 * theta);
@@ -272,7 +310,7 @@ function drawVisualization1() {
 
 //math equations to draw one visualization
 function drawVisualization2(parameter1, parameter2){
-
+    angleMode(DEGREES)
     //Epicycloid Involute
     beginShape();
     // stroke(242, 194, 203);
@@ -280,8 +318,14 @@ function drawVisualization2(parameter1, parameter2){
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
-        LimMouseX = constrain(parameter1, 0, width-20);
-        var a = map(LimMouseX, 0, width-20, 0, 60); //relate to mouseX
+        if (width > 500) {
+            LimMouseX = constrain(parameter1, 0, startX + rectW);
+            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(parameter1, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+
         var theta = map(i, 0, parameter1/5, 20, 360);
         var b = map(parameter2, 0, height, 0, 50);
         var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
@@ -291,32 +335,91 @@ function drawVisualization2(parameter1, parameter2){
     }
 }
 
-function drawEllipse() {
+var widthArray = []
+var sizeArray = []
 
-    var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3;
+function drawEllipse() {
+    angleMode(DEGREES)
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + 1;
+
+
     let spectrum = fft.analyze()
+
     widthFreq = spectrum[0]
+    if (widthArray.length == 5) {
+        let widthIndex = Math.floor(Math.random() * 5)
+        widthArray[widthIndex] = widthFreq
+    } else {
+        widthArray.push(widthFreq)
+    }
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
+    if (sizeArray.length == 5) {
+        let sizeIndex = Math.floor(Math.random() * 5)
+        sizeArray[sizeIndex] = size
+    } else {
+        sizeArray.push(size)
+    }
     noFill()
     stroke(visualizationColor)
     strokeWeight(5)
-    ellipse(0, 0 , size, widthFreq)
+    if (sizeArray.length == 5) {
 
-  }
-  function drawRect() {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 5], widthArray[widthArray.length - 5])
+        rotate(angle);
+    } else if (sizeArray.length == 4) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])
+        rotate(angle);
+    } else
+    if (sizeArray.length == 3) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+    } else if (sizeArray.length == 2) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+    } else {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+    }
 
-    var rectW = width; rectH = width;     //canvas width & height
-    var startX = 0; startY = 20 + height/3;
+}
+
+function drawRect() {
+    angleMode(DEGREES)
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
     rectMode(CENTER)
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     rotate(angle);
-    angle = angle + 1; //can vary the speed of rotation based on some aspect of the sound
+    angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
@@ -326,35 +429,66 @@ function drawEllipse() {
     strokeWeight(5)
     rect(0,0, size, widthFreq)
 
-  }
+}
 
-  //TO DO: FIX THESE
-  function drawTriangle() {
-    var rectW = width; rectH = width;
-    var startX = 20 ; startY = 20 + height/3;
+function polygon(x, y, radius, npoints) {
+    angleMode(RADIANS);
+
+    var angle = TWO_PI / npoints;
+
+    beginShape();
+    for (var a = 0; a < TWO_PI; a += angle) {
+        var sx = x + cos(a) * radius;
+        var sy = y + sin(a) * radius;
+        vertex(sx, sy);
+    }
+    endShape(CLOSE);
+}
+
+function drawTriangle() {
+    angleMode(RADIANS);
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
 
     translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + 1;
+    // rotate(angle);
+    // angle = angle + 1;
 
     let spectrum = fft.analyze()
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    if (widthFreq != 0) {
-        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
-    } else {
-        triangle(.75*rectW, rectH/2, rectW/2, size,  rectW/4,  rectH/2)
+
+    pieces = 20;
+
+    for (i = 0; i < pieces; i += 0.1) {
+
+        rotate(TWO_PI / (pieces / 2));
+
+        push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        fill(visualizationColor)
+        polygon((75 * panLevel), (widthFreq), size, 3)
+        pop();
     }
-  }
+}
 
-  function drawQuad() {
-    var rectW = width; rectH = width;
-    var startX = 20 ; startY = 20 + height/3;
+function randomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
+let sides = randomNumber(4, 15);
+
+
+function drawRandom() {
+    angleMode(RADIANS);
+    // var rectW = 375; rectH = 375;
+    // var startX = 20 ; startY = 20 + rectH;
+
+    translate(startX + (rectW/2), startY + (rectH/2)+ 50); //set the new origin/point of rotation
     // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
     // rotate(angle);
     // angle = angle + 1;
@@ -363,15 +497,21 @@ function drawEllipse() {
     widthFreq = spectrum[0]
     level = amplitude.getLevel()
     let size = map(level, 0, 1, 0, rectH);
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    if (widthFreq != 0) {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
-    } else {
-        quad(startX + rectW/4 , startY + size, startX + (.75 * rectW), startY + size,  startX + (rectW * .9),  .75*rectH,startX + rectW/3, .75*rectH )
+
+    pieces = panLevel + 1;
+
+    for (i = 0; i < pieces; i += .5) {
+
+        rotate(TWO_PI / (pieces/2));
+
+        push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        noFill()
+        polygon(70 * panLevel, (size), widthFreq * .75, sides)
+        pop();
     }
-  }
+}
 
 function mousePressed(){
     //create a new curve and append to curveArray
@@ -408,8 +548,8 @@ function mouseReleased(){
 function drawCurve(){
     //draw canvas
 
-    curveRectW = displayHeight/3;
-    curveRectH = displayHeight/3;   //canvas width & height
+    curveRectW = 335;
+    curveRectH = 335;   //canvas width & height
     curveRectX = 20;
     curveRectY = 20;  //canvas upper left corner   //canvas upper left corner
     rectMode(CORNER);
@@ -418,38 +558,36 @@ function drawCurve(){
     rect(curveRectX, curveRectY, curveRectW, curveRectH);
 
     if (newCurveExist == true){
-            if (newCurve.drawing) {
-                //as mouse is dragging to draw, add x and y coordinates to list
-                newCurve.saveCoordinates();
-                fill(newCurve.color);
-            } else if (!(newCurve.animating)){
-                fill(newCurve.color);
-            } else {
-                fill("lightgrey");
-            }
-            newCurve.display(curveRectX, curveRectY, curveRectW, curveRectH);
+        if (newCurve.drawing) {
+            //as mouse is dragging to draw, add x and y coordinates to list
+            newCurve.saveCoordinates();
+            fill(newCurve.color);
+        } else if (!(newCurve.animating)){
+            fill(newCurve.color);
+        } else {
+            fill("lightgrey");
+        }
+        newCurve.display(curveRectX, curveRectY, curveRectW, curveRectH);
 
-            if (newCurve.animating){
-                newCurve.animate(curveRectX, curveRectY, curveRectW, curveRectH);
-            }
+        if (newCurve.animating){
+            newCurve.animate(curveRectX, curveRectY, curveRectW, curveRectH);
+        }
 
-            /*
-            //calculate sum of x and y coordinates in the list
-            for (var i = 0; i <newCurve.xAxis.length ; i++){
-                newCurve.volume += newCurve.xAxis[i];
-                newCurve.freq += newCurve.yAxis[i];
-            }
-            newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
-            newCurve.freq = constrain(newCurve.freq,20,20000);
-            filter.freq(newCurve.freq);
-
-             */
+        /*
+        //calculate sum of x and y coordinates in the list
+        for (var i = 0; i <newCurve.xAxis.length ; i++){
+            newCurve.volume += newCurve.xAxis[i];
+            newCurve.freq += newCurve.yAxis[i];
+        }
+        newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
+        newCurve.freq = constrain(newCurve.freq,20,20000);
+        filter.freq(newCurve.freq);
+         */
 
     }
 
 
 }
-
 
 //two bars to bounce off with
 class bar {
@@ -533,7 +671,7 @@ var bar2 = new bar(0, 0);
 //bounce circle to manipulate sound
 function drawBounceCircle(){
     //draw canvas
-    var rectW = displayHeight/3; rectH = displayHeight/3;   //canvas width & height
+    var rectW = 335; rectH = 335;    //canvas width & height
     var startX = 20; startY = 20;  //canvas upper left corner
     rectMode(CORNER);
     fill(255);
@@ -576,6 +714,7 @@ function drawBounceCircle(){
     }
     //change direction
     var dir = map(ellipseX, startX, startX+rectW, -1.0,1.0);
+    panLevel = dir;
     sound.pan(dir);
 
     //change frequency
@@ -674,8 +813,9 @@ function drawReverb(){
 function changeDirection(){
     if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
         panX = constrain(mouseX, sliderStart, sliderStop);
-        let level = map(panX, sliderStart, sliderStop, -1.0,1.0);
-        sound.pan(level);
+        var dir = map(panX, sliderStart, sliderStop, -1.0,1.0);
+        panLevel = dir;
+        sound.pan(dir);
     }
 }
 
