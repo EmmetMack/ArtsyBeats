@@ -186,7 +186,7 @@ function draw() {
     background(0);
 
     //click "PlaySound" to play/pause audio
-    document.getElementById('soundButton').onclick = function() {
+    document.getElementById('playSoundButton').onclick = function() {
         toggleSound();
     }
     //switch manipulation method to slider

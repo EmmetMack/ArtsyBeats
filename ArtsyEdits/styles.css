@@ -10,6 +10,10 @@ h1 {
     color: white;
 }
 
+.primaryButtonBox, #titleImg{
+    display: inline-block;
+}
+
 button {
     border-radius: 5px;
     margin: 2px;
