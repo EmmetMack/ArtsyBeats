@@ -192,6 +192,7 @@ function draw() {
         sliderButtonClicked = true;
         bounceCircleButtonClicked = false;
         drawCurveButtonClicked = false;
+        changeIconColor('sliderIcon');
     }
     //switch manipulation method to bounce circle
     document.getElementById('bounceCircle').onclick = function() {
@@ -278,6 +279,11 @@ function draw() {
 function fnChangeBorder(imageId){
     document.getElementById(imageId).style.borderColor="#6F4EAB";
     print("clicked");
+}
+
+function changeIconColor(iconId){
+    document.getElementById(iconId).style.borderColor="#6F4EAB";
+    print("change");
 }
 
 //math equations to draw one visualization

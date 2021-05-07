@@ -35,6 +35,17 @@ hr{
     bottom: 2%;
 }
 
+.svg {
+    margin-left: 5px;
+}
+
+.primaryIcon{
+
+}
+/*.svg:after{*/
+/*    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);*/
+/*}*/
+
 #bottom{
     margin-left: 3%;
 }
@@ -82,7 +93,7 @@ i{
     background-color: black;
     border: 1px solid white;
     color: white;
-    padding: 15px 42px;
+    padding: 18px 40px;
     text-align: center;
     text-decoration: none;
     font-family: Ubuntu;
@@ -110,13 +121,13 @@ i{
     background-color: white;
     border: none;
     color: black;
-    padding: 20px;
+    padding: 20px 40px;
     border-radius: 50px;
     font-family: Ubuntu;
     font-size: x-large;
     text-align: center;
     text-decoration: none;
-    margin-left: 10px;
+    margin-left: 15px;
     cursor: pointer;
 }
 
