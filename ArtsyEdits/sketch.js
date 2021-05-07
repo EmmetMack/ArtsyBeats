@@ -161,7 +161,7 @@ function setVisualizationPosition() {
         rectY = 20;
         ellipseX = rectX + rectW/2;
         ellipseY = rectY + rectH/2;
-        vizX = 375;
+        vizX = 300;
         vizY = 20;
     }
 }
@@ -573,17 +573,6 @@ function drawCurve(){
         if (newCurve.animating){
             newCurve.animate(rectX, rectY, rectW, rectH);
         }
-
-        /*
-        //calculate sum of x and y coordinates in the list
-        for (var i = 0; i <newCurve.xAxis.length ; i++){
-            newCurve.volume += newCurve.xAxis[i];
-            newCurve.freq += newCurve.yAxis[i];
-        }
-        newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
-        newCurve.freq = constrain(newCurve.freq,20,20000);
-        filter.freq(newCurve.freq);
-         */
 
     }
 
