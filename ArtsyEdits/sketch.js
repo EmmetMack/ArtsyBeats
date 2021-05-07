@@ -273,9 +273,11 @@ function draw() {
     }
 }
 
-
+//click to change color of visualization button border
+//doesn't work yet
 function fnChangeBorder(imageId){
     document.getElementById(imageId).style.borderColor="#6F4EAB";
+    print("clicked");
 }
 
 //math equations to draw one visualization
