@@ -146,14 +146,12 @@ function preload() {
 }
 
 function windowResize() {
-    console.log("window resized")
     // resizeCanvas(displayWidth, displayHeight, true);
 
     setVisualizationPosition()
-};
+}
 
 function setVisualizationPosition() {
-    console.log(displayWidth);
     if (displayWidth < 500) {
         startX = 0;
         startY = 20 + rectH;
@@ -275,6 +273,10 @@ function draw() {
     }
 }
 
+
+function fnChangeBorder(imageId){
+    document.getElementById(imageId).style.borderColor="#6F4EAB";
+}
 
 //math equations to draw one visualization
 function drawVisualization1() {

@@ -1,36 +1,122 @@
 h3 {
     color: white;
+    font-size: xx-large;
+    font-family: Ubuntu;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 28px;
 }
 
 label {
     color: white;
+    font-family: Ubuntu;
+    font-size: medium;
 }
 
-h1 {
+hr{
+    width: 95%;
+    border: none;
+    height: 3px;
+    background-color: white;
+}
+
+#titleBox{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 2%;
+}
+
+.primaryButtons{
+    margin-right: 2%;
+    margin-top: 5%;
+}
+
+.primaryButtons button{
+    bottom: 2%;
+}
+
+#bottom{
+    margin-left: 3%;
+}
+
+#visualizationBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 7%;
+
+}
+
+#manipulationBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 7%;
+}
+
+.vl {
+    vertical-align: top;
+    display: inline-block;
+    border-left: 4px solid white;
+    height: 300px;
+    margin-top: 30px;
+}
+
+.manipulationButtons, .visualizationButtons{
+    height: 90px;
+}
+
+
+.instructionBox{
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-family: Ubuntu;
+    font-size: medium;
+}
+
+i{
     color: white;
 }
 
-.primaryButtonBox, #titleImg{
+.manipulationButtons button{
+    background-color: black; /* Green */
+    border: 1px solid white;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
     display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
 }
 
-button {
-    border-radius: 5px;
-    margin: 2px;
-    padding: 5px;
-    background: #5954A4;
+.manipulationButtons button:not(:last-child){
+    border-right: none;
+}
+
+.manipulationButtons button:hover{
+    background-color: white;
+    color: black;
+}
+
+.manipulationButtons button:focus{
+    background-color: white;
+    color: black;
+}
+
+
+/*  gradient color
     background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
     background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
-    background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
-    color: white;
-}
+    background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);*/
 
 #title {
     font-family: Monoton;
 }
 
-.visualizationButtons img {
-    border: 2px solid #5954A4;
+.visualizationButtons img{
+    border: 2px solid white;
 }
 
 
