@@ -27,18 +27,17 @@
 
 <body style="background-color:black;">
 <div>
+    <!-- title box-->
     <div>
         <div id = 'titleBox'>
             <img src="assets/title_image.png" id ="titleImage"/>
-            <div class="primaryButtons">
-                <button type="button" id="chooseSoundButton"><img class="primaryIcon" src="assets/choose.svg" width="20" height="20"></img>&nbsp; Choose Sound</button>
-                <button type="button" id="playSoundButton"><img class="primaryIcon" src="assets/play.svg" width="22" height="24"></img>&nbsp;&nbsp;Play/Pause</button>
-
-            </div>
+        </div>
+        <div>
+            <small>toilet.wav uploaded</small>
         </div>
     </div>
 
-    <br>
+    <!-- horizontal line-->
     <hr>
 
     <div id="bottom">
@@ -47,7 +46,8 @@
             <div>
                 <h3>Select your visualization</h3>
                 <div class="visualizationButtons">
-                    <img src="assets/rectangle_visualization.png" id="rectangleButton" onclick="fnChangeBorder('rectangleButton')"/>
+<!--                    '<input type="button" onClick="gotoNode(\'' + result.name + '\')" />'-->
+                    <img src="assets/rectangle_visualization.png" id="rectangleButton" onclick="fnChangeBorder()">
                     <img src = "assets/ellipse_visualization.png" id="ellipseButton" onclick="fnChangeBorder('ellipseButton')"/>
                     <img src = "assets/triangle_visualization.png" id = "triangleButton" onclick="fnChangeBorder('triangleButton')"/>
                     <img src="assets/random_visualization.png" id="randomButton" onclick="fnChangeBorder('randomButton')"/>
@@ -72,9 +72,9 @@
             <div>
                 <h3>Select manipulation</h3>
                 <div class="manipulationButtons">
-                    <button type="button" id="sliderButton"><img class="svg" id="sliderIcon" src="assets/slider.svg" width="19" height="17"></img>&nbsp;&nbsp;&nbsp;Slider</button>
-                    <button type="button" id="bounceCircle"><img class="svg" src="assets/bounce.svg" width="20" height="15"></img>&nbsp;&nbsp;&nbsp;Bounce</button>
-                    <button type="button" id="drawCurve"><img class="svg" src="assets/doodle.svg" width="19" height="18"></img>&nbsp;&nbsp;&nbsp;Doodle</button>
+                    <button type="button" id="sliderButton"><object class="svg" id="sliderIcon" data="assets/slider.svg" width="19" height="17"></object>&nbsp;&nbsp;&nbsp;Slider</button>
+                    <button type="button" id="bounceCircle"><object class="svg" data="assets/bounce.svg" width="20" height="15"></object>&nbsp;&nbsp;&nbsp;Bounce</button>
+                    <button type="button" id="drawCurve"><object class="svg" data="assets/doodle.svg" width="19" height="18"></object>&nbsp;&nbsp;&nbsp;Doodle</button>
                 </div>
 
                 <div class="instructionBox">
@@ -84,21 +84,21 @@
         </div>
 
     </div>
-
-
-<!--    &lt;!&ndash; submit button &ndash;&gt;-->
-<!--    <div>-->
-<!--        <div>-->
-<!--            <br>-->
-<!--            <button type="button" id ="submit">Submit</button>-->
-<!--        </div>-->
-<!--    </div>-->
-
+    <!-- p5 canvas -->
     <div>
-        <div>
+        <div id="p5">
 
         </div>
     </div>
+
+    <!-- submit + play button -->
+    <div>
+        <div class="primaryButtons">
+            <button type="button" id="playSoundButton"><img class="primaryIcon" src="assets/play.svg" width="22" height="24"></img>&nbsp;&nbsp;Visual & Sound</button>
+            <button type="button" id="submitButton"><img class="primaryIcon" src="assets/choose.svg" width="20" height="20"></img>&nbsp; Submit </button>
+        </div>
+    </div>
+
 </div>
 </body>
 

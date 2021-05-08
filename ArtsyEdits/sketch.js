@@ -1,7 +1,6 @@
 var sound, amplitude, frequency, fft;
 
 //slider variables
-var sliderLength = 355
 var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
 //ball on the slider
 var panX = 20, panY = 75;
@@ -14,10 +13,10 @@ var sliderBallRadius = 10;
 // change style, add in visualization images as the buttons for them
 // add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
 
-var rectW = 550;
-var rectH = 375;
 var rectX = 20;
 var rectY = 20; //= 20 20 + rectH
+var rectW = 550;
+var rectH = 375;
 
 var vizX = 0;
 var vizY = 20;
@@ -63,19 +62,11 @@ class curve {
 
     display(sx, sy, sw, sh){
         for (var i = 0; i < this.xAxis.length; i++){
+            noStroke();
             quad(this.xAxis[i-1], this.yAxis[i-1],
                 this.xAxis[i], this.yAxis[i],
                 this.xAxis[i], sh+sy,
                 this.xAxis[i-1], sh+sy)
-        }
-    }
-
-    bounce(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
-                ellipseDeltaX = -ellipseDeltaX;
-                ellipseDeltaY = -ellipseDeltaY;
-            }
         }
     }
 
@@ -103,7 +94,7 @@ class curve {
         }
         //draw ball on animation
         fill("skyblue");
-        ellipse(this.xAxis[this.frameCount], this.yAxis[this.frameCount], 10);
+        ellipse(this.xAxis[this.frameCount], this.yAxis[this.frameCount], 15);
         this.frameCount += 1;
         if (this.frameCount == this.xAxis.length) {
             this.animating = false;
@@ -157,12 +148,22 @@ function setVisualizationPosition() {
         rectX = 0;
         rectY = 20 + rectH;
     } else {
-        rectX = 1200;
-        rectY = 20;
+        //canvas of bounce&doodle
+        var canvasRatio = 0.62;
+        rectX = displayWidth * canvasRatio;
+        rectY = 30;
+        //ball of bounce
         ellipseX = rectX + rectW/2;
         ellipseY = rectY + rectH/2;
-        vizX = 300;
-        vizY = 20;
+        //canvas of visualization
+        vizX = displayWidth/8;
+        vizY = 30;
+        //canvas of slider
+        sliderStart = displayWidth * canvasRatio;
+        sliderStop = sliderStart + 325;
+        panX = displayWidth * canvasRatio;
+        frequencyX = displayWidth * canvasRatio;
+        reverbX = displayWidth * canvasRatio;
     }
 }
 
@@ -170,9 +171,9 @@ window.addEventListener('load', setVisualizationPosition);
 window.addEventListener('resize', windowResize);
 
 function setup() {
-
     angleMode(DEGREES);
-    createCanvas(displayWidth, displayHeight);
+    var myCanvas = createCanvas(displayWidth, 500);
+    myCanvas.parent("p5");
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
     filter = new p5.BandPass();
@@ -280,14 +281,14 @@ function draw() {
 
 //click to change color of visualization button border
 //doesn't work yet
-function fnChangeBorder(imageId){
-    document.getElementById(imageId).style.borderColor="#6F4EAB";
-    print("clicked");
+function fnChangeBorder(){
+    // document.getElementById(imageId).style.borderColor="#6F4EAB";
+    //console.log("clicked");
 }
 
-function changeIconColor(iconId){
-    document.getElementById(iconId).style.borderColor="#6F4EAB";
-    print("change");
+function changeIconColor(){
+    document.getElementById('sliderIcon').style.filter = "invert(90%) sepia(37%) saturate(3289%) hue-rotate(122deg) brightness(103%) contrast(107%)";
+
 }
 
 //math equations to draw one visualization
@@ -377,7 +378,7 @@ function drawEllipse() {
     }
     noFill()
     stroke(visualizationColor)
-    strokeWeight(5)
+    strokeWeight(4)
     if (sizeArray.length == 5) {
 
         angle = angle + (panLevel*2.5);
@@ -524,8 +525,6 @@ function mousePressed(){
     if (bounceCircleButtonClicked == true){
         bar1.drag(mouseX, mouseY);
         bar2.drag(mouseX, mouseY);
-        //var singleCurve = new curve();
-        //append(curveArray, singleCurve);
     }
     //create a new curve and reset curve
     if (drawCurveButtonClicked == true){
@@ -554,9 +553,23 @@ function mouseReleased(){
 function drawCurve(){
     //draw canvas
     rectMode(CORNER);
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    rect(rectX, rectY, rectW, rectH, 10);
+    //axis
+    line(rectX, rectY+rectH+30, rectX+rectW+30, rectY+rectH+30);
+    line(rectX+rectW+30, rectY+rectH, rectX+rectW+30, rectY);
     fill(255);
+    triangle(rectX, rectY+rectH+30, rectX+10, rectY+rectH+25, rectX+10, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY+rectH+30, rectX+rectW+20, rectY+rectH+25, rectX+rectW+20, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY, rectX+rectW+25, rectY+10, rectX+rectW+35, rectY+10);
+    //axis label
     noStroke();
-    rect(rectX, rectY, rectW, rectH);
+    textSize(18);
+    text("pitch", rectX+rectW, rectY-15);
+    text("direction", rectX, rectY+rectH+60);
+
 
     if (newCurveExist == true){
         if (newCurve.drawing) {
@@ -573,10 +586,7 @@ function drawCurve(){
         if (newCurve.animating){
             newCurve.animate(rectX, rectY, rectW, rectH);
         }
-
     }
-
-
 }
 
 //two bars to bounce off with
@@ -660,10 +670,24 @@ var bar2 = new bar(0, 0);
 
 //bounce circle to manipulate sound
 function drawBounceCircle(){
+    //draw canvas
     rectMode(CORNER);
-    fill(255);
+    noFill();
     stroke(255);
-    rect(rectX, rectY, rectW, rectH);
+    strokeWeight(2);
+    rect(rectX, rectY, rectW, rectH, 10);
+    //axis
+    line(rectX, rectY+rectH+30, rectX+rectW+30, rectY+rectH+30);
+    line(rectX+rectW+30, rectY+rectH, rectX+rectW+30, rectY);
+    fill(255);
+    triangle(rectX, rectY+rectH+30, rectX+10, rectY+rectH+25, rectX+10, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY+rectH+30, rectX+rectW+20, rectY+rectH+25, rectX+rectW+20, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY, rectX+rectW+25, rectY+10, rectX+rectW+35, rectY+10);
+    //axis label
+    noStroke();
+    textSize(18);
+    text("pitch", rectX+rectW, rectY-15);
+    text("direction", rectX, rectY+rectH+60);
 
     //draw bar
     if (bar1.haveBeenDragged == false){
@@ -680,8 +704,8 @@ function drawBounceCircle(){
     bar2.bounce();
 
     //draw circle
-    fill(0);
-    stroke(0);
+    fill(255);
+    stroke(255);
     ellipse(ellipseX,ellipseY,ellipseR*2);
 
     //circle bounce off boundary

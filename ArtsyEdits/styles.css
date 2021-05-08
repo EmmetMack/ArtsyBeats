@@ -31,10 +31,6 @@ hr{
     margin-top: 3%;
 }
 
-.primaryButtons button{
-    bottom: 2%;
-}
-
 .svg {
     margin-left: 5px;
 }
@@ -118,9 +114,11 @@ i{
 }
 
 .primaryButtons button{
-    background-color: white;
+    background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+    background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+    background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
     border: none;
-    color: black;
+    color: white;
     padding: 20px 40px;
     border-radius: 50px;
     font-family: Ubuntu;
@@ -131,10 +129,9 @@ i{
     cursor: pointer;
 }
 
-/*  gradient color
-    background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
-    background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
-    background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);*/
+.primaryIcon{
+    filter: invert(92%) sepia(98%) saturate(6%) hue-rotate(142deg) brightness(104%) contrast(102%);
+}
 
 #title {
     font-family: Monoton;
