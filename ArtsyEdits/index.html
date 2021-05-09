@@ -33,7 +33,7 @@
             <img src="assets/title_image.png" id ="titleImage"/>
         </div>
         <div class="loaded">
-            <small>toilet.wav loaded</small>
+            <small><object class="svg" data="assets/file.svg" width="14" height="18"></object>&nbsp; toilet.wav loaded</small>
         </div>
     </div>
 
@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="instructionBox">
-                    <i>Select different visualizations to change animation.</i>
+                    <i>* Select different visualizations to change animation.</i>
                 </div>
                 <div>
                     <label for="lineColor">Change the color for your visualization</label>
@@ -65,7 +65,8 @@
             </div>
         </div>
 
-        <div class="vl"></div>
+        <!--vertical bar-->
+        <!--<div class="vl"></div>-->
 
         <!-- manipulation box-->
         <div id="manipulationBox">
@@ -78,7 +79,7 @@
                 </div>
 
                 <div class="instructionBox">
-                    <i>* Drag sliders to see how your visual changes in real-time. </i>
+                    <i>* Manipulate sound to see how your visual changes in real-time. </i>
                 </div>
             </div>
         </div>
@@ -87,15 +88,16 @@
     <!-- p5 canvas -->
     <div>
         <div id="p5">
-
         </div>
     </div>
 
     <!-- submit + play button -->
-    <div>
-        <div class="primaryButtons">
+    <div class="primaryButtons">
+        <div id="playSoundButtonBox">
             <button type="button" id="playSoundButton"><img class="primaryIcon" src="assets/play.svg" width="22" height="24"></img>&nbsp;&nbsp;Visual & Sound</button>
-            <button type="button" id="submitButton"><img class="primaryIcon" src="assets/choose.svg" width="20" height="20"></img>&nbsp; Submit </button>
+        </div>
+        <div id="submitButtonBox">
+            <button type="button" id="submitButton"><img class="primaryIcon" src="assets/submit.svg" width="20" height="20"></img>&nbsp; Submit </button>
         </div>
     </div>
 

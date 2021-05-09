@@ -8,13 +8,16 @@ h3 {
 }
 
 small {
-    color: white;
+    color: #a0a0a0;
     font-family: Ubuntu;
+    font-size: 20px;
 }
 
 .loaded{
     display: inline-block;
-
+    float: right;
+    margin-right: 3%;
+    margin-top: 4.5%;
 }
 
 label {
@@ -36,32 +39,15 @@ hr{
     margin-left: 3%;
 }
 
-.primaryButtons{
-    margin-right: 3%;
-    margin-top: 3%;
-}
-
 .svg {
     margin-left: 5px;
-}
-
-.primaryIcon{
-
 }
 
 #bottom{
     margin-left: 3%;
 }
 
-#visualizationBox{
-    vertical-align: top;
-    display: inline-block;
-    width: 40%;
-    margin-left: 7%;
-
-}
-
-#manipulationBox{
+#visualizationBox, #manipulationBox{
     vertical-align: top;
     display: inline-block;
     width: 40%;
@@ -110,6 +96,16 @@ i{
     border-right: none;
 }
 
+#sliderButton{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#doodleButton{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
 .primaryButtons button{
     background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
     background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
@@ -122,13 +118,25 @@ i{
     font-size: x-large;
     text-align: center;
     text-decoration: none;
-    margin-left: 15px;
     cursor: pointer;
 }
 
-.primaryIcon{
-    filter: invert(92%) sepia(98%) saturate(6%) hue-rotate(142deg) brightness(104%) contrast(102%);
+#playSoundButtonBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 5%;
+    text-align: center;
 }
+
+#submitButtonBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 5%;
+    text-align: center;
+}
+
 
 #title {
     font-family: Monoton;

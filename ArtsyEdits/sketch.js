@@ -1,12 +1,13 @@
-var sound, amplitude, frequency, fft;
+var sound, amplitude, frequency, fft, font;
 
 //slider variables
 var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
 //ball on the slider
+var sliderHeight = 50; sliderBreak = 150;
 var panX = 20, panY = 75;
 var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
-var sliderBallRadius = 10;
+var sliderBallRadius = 12;
 
 //TO-DO:
 // set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
@@ -35,10 +36,8 @@ var angle = 0;
 //BounceCircle variables
 var ellipseR = 25;
 var ellipseX, ellipseY;
-//ellipse velocity
-var ellipseDeltaX = 0; ellipseDeltaY = 0;
-
-// var curveArray = [];
+//initiate ellipse velocity with a random value
+var ellipseDeltaX = Math.floor(Math.random() * (5 - (-5)) + (-5)); ellipseDeltaY = Math.floor(Math.random() * (5 - (-5)) + (-5));
 
 //drawCurve variables
 var newCurve;
@@ -118,9 +117,14 @@ class curve {
 }
 
 //determine manipulation method
-var sliderButtonClicked = false;
+var sliderButtonClicked = true;
 var bounceCircleButtonClicked = false;
-var drawCurveButtonClicked = true;
+var drawCurveButtonClicked = false;
+
+//initial animation as instruction
+var doodleAnimation;
+var playDoodleAnimation = true;
+var playBounceAnimation = true;
 
 //determine visualization
 var drawRectClicked = true;
@@ -129,19 +133,13 @@ var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
 var drawRandomClicked = false;
 
-
-
 var canvas;
-
-var svg1 = false;
-var svg2 = false;
-var svg3 = false;
-
-
 
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
     sound = loadSound('assets/toilet.wav');
+    font = loadFont('assets/Ubuntu-Regular.ttf');
+    doodleAnimation = loadImage("assets/doodleAnimation.gif");
 }
 
 function windowResize() {
@@ -166,11 +164,11 @@ function setVisualizationPosition() {
         vizX = displayWidth/8;
         vizY = 30;
         //canvas of slider
-        sliderStart = displayWidth * canvasRatio;
-        sliderStop = sliderStart + 325;
-        panX = displayWidth * canvasRatio;
-        frequencyX = displayWidth * canvasRatio;
-        reverbX = displayWidth * canvasRatio;
+        sliderStart = rectX + 30;
+        sliderStop = rectX + rectW - sliderBreak - 30;
+        panX = sliderStart;
+        frequencyX = sliderStart;
+        reverbX = sliderStart;
     }
 }
 
@@ -189,10 +187,10 @@ function setup() {
     sound.connect(filter);
     reverb.process(sound, 3, 2);
     visualizationColor = document.getElementById('lineColor').value
-
-    document.getElementById('doodleIcon').style.filter = "invert(100%)";
-    document.getElementById('doodleButton').style.backgroundColor = 'white';
-    document.getElementById('doodleButton').style.color = 'black';
+    //initially, slider is selected
+    document.getElementById('sliderIcon').style.filter = "invert(100%)";
+    document.getElementById('sliderButton').style.backgroundColor = 'white';
+    document.getElementById('sliderButton').style.color = 'black';
 }
 
 function draw() {
@@ -297,7 +295,6 @@ function draw() {
 }
 
 //click to change color of visualization button border
-//doesn't work yet
 function changeBorderColor(clickedId){
     for (var i = 0; i < 4; i++){
         document.querySelectorAll(".visualizationButtons img")[i].style.border="2px solid #FFFFFF";
@@ -327,7 +324,6 @@ function doodleButtonHover() {
         document.getElementById('doodleIcon').style.filter = "invert(100%)";
         document.getElementById('doodleButton').style.backgroundColor = 'white';
         document.getElementById('doodleButton').style.color = 'black';
-
     }
 }
 
@@ -355,19 +351,18 @@ function doodleButtonUnhover() {
     }
 }
 
-function changeIconColor(icon1, icon2, icon3, button1, button2, button3){
-    document.getElementById(icon1).style.filter = "invert(100%)";
-    document.getElementById(button1).style.backgroundColor = 'white';
-    document.getElementById(button1).style.color = 'black';
+function changeIconColor(clickedIcon, unClickedIcon1, unClickedIcon2, clickedButton, unClickedButton1, unClickedButton2){
+    document.getElementById(clickedIcon).style.filter = "invert(100%)";
+    document.getElementById(clickedButton).style.backgroundColor = 'white';
+    document.getElementById(clickedButton).style.color = 'black';
 
+    document.getElementById(unClickedIcon1).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton1).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton1).style.color = 'white';
 
-    document.getElementById(icon2).style.filter = "invert(0%)";
-    document.getElementById(button2).style.backgroundColor = 'black';
-    document.getElementById(button2).style.color = 'white';
-
-    document.getElementById(icon3).style.filter = "invert(0%)";
-    document.getElementById(button3).style.backgroundColor = 'black';
-    document.getElementById(button3).style.color = 'white';
+    document.getElementById(unClickedIcon2).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton2).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton2).style.color = 'white';
 
 }
 
@@ -600,6 +595,10 @@ function drawRandom() {
     }
 }
 
+function mouseDragged(){
+
+}
+
 function mousePressed(){
     //create a new curve and append to curveArray
     if (bounceCircleButtonClicked == true){
@@ -608,6 +607,7 @@ function mousePressed(){
     }
     //create a new curve and reset curve
     if (drawCurveButtonClicked == true){
+        playDoodleAnimation = false;
         newCurve = new curve();
         newCurveExist = true;
         if (newCurve.clickedWithinCanvas(rectX, rectY, rectW, rectH)){
@@ -650,6 +650,11 @@ function drawCurve(){
     text("pitch", rectX+rectW, rectY-15);
     text("direction", rectX, rectY+rectH+60);
 
+    //animation instruction
+    if (playDoodleAnimation){
+        image(doodleAnimation, rectX+5, rectY+5, rectW-10, rectH-10);
+    }
+
 
     if (newCurveExist == true){
         if (newCurve.drawing) {
@@ -676,6 +681,8 @@ class bar {
         this.y = y;
         this.width = 20;
         this.height = 120;
+        this.mouseStartX = 0;
+        this.mouseStartY = 0;
         this.offsetX = 0;
         this.offsetY = 0;
         this.dragging = false;
@@ -684,11 +691,13 @@ class bar {
 
     display(px, py, sx, sy, sw, sh){
         if (this.dragging){
+
             //move bar when dragging
             this.x = this.offsetX + px;
             this.y = this.offsetY + py;
+            print(this.x, this.y);
         }
-        fill(125);
+        fill(111,78,171);
         noStroke();
         //constrain bar within canvas
         this.x = constrain(this.x, sx, sx+sw-this.width);
@@ -813,21 +822,6 @@ function drawBounceCircle(){
     freq = constrain(freq,20,20000);
     filter.freq(freq);
 
-    /*
-    //draw curve
-    if (mouseIsPressed === true) {
-        //as mouse is dragging to draw, add x and y coordinates to array
-        curveArray[curveArray.length-1].saveCoordinates();
-    }
-    stroke(0);
-    strokeWeight(3);
-    for (var i = 0; i < curveArray.length; i++){
-        curveArray[i].display();
-        curveArray[i].bounce();
-        let dryWet = constrain(map(ellipseX, rectX, rectX+rectW, 0, 1), 0, 1);
-        reverb.drywet(dryWet);
-    }
- */
 
 }
 
@@ -835,9 +829,9 @@ function drawBounceCircle(){
 function drawSliders(){
     //draw sliders
     stroke(255);
-    drawDirection();
-    drawFrequency();
-    drawReverb();
+    drawSlider(panX, panY, "Direction", 30);
+    drawSlider(frequencyX, frequencyY, "Pitch", 50);
+    drawSlider(reverbX, reverbY, "Reverb", 40);
 
     //drag slider action
     if (mouseIsPressed) {
@@ -845,8 +839,34 @@ function drawSliders(){
         changeFrequency();
         changeReverb();
     }
-    //visualize
-    // visualizeSliders();
+}
+
+//draw SINGLE slider
+function drawSlider(parameterX, parameterY, labelText, labelOffset){
+    rectMode(CORNER);
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    rect(rectX, parameterY, rectW, sliderHeight, 40);
+    //text label background
+    rect(rectX+rectW-sliderBreak, parameterY, sliderBreak, sliderHeight, 0, 40, 40, 0)
+    //text label
+    textSize(22);
+    textStyle(NORMAL);
+    textFont(font);
+    strokeWeight(0);
+    fill(255);
+    text(labelText, rectX+rectW-sliderBreak+labelOffset, parameterY+sliderHeight/2+10);
+    //slider
+    strokeWeight(5);
+    stroke(255);
+    line(sliderStart, parameterY+sliderHeight/2, sliderStop, parameterY+sliderHeight/2);
+    stroke(176, 154, 217);
+    line(sliderStart, parameterY+sliderHeight/2, parameterX, parameterY+sliderHeight/2);
+    //ball on slider
+    noStroke();
+    fill(111,78,171);
+    ellipse(parameterX, parameterY+sliderHeight/2, sliderBallRadius*2);
 }
 
 //draw visualization corresponding to slider values
@@ -855,54 +875,9 @@ function visualizeSliders(){
     drawVisualization2(frequencyX, reverbX);
 }
 
-//draw direction slider
-function drawDirection(){
-    //direction text
-    textSize(22);
-    textStyle(ITALIC);
-    strokeWeight(0);
-    fill(255);
-    text("Direction", sliderStart, panY - 40);
-
-    //direction slider
-    strokeWeight(5);
-    line(sliderStart, panY, sliderStop, panY);
-    ellipse(panX, panY, sliderBallRadius*2);
-}
-
-//draw frequency slider
-function drawFrequency(){
-    //frequency text
-    textSize(22);
-    textStyle(ITALIC);
-    strokeWeight(0);
-    fill(255);
-    text("Pitch", sliderStart, frequencyY - 40);
-
-    //frequency slider
-    strokeWeight(5);
-    line(sliderStart, frequencyY, sliderStop, frequencyY);
-    ellipse(frequencyX, frequencyY, sliderBallRadius*2);
-}
-
-//draw reverb slider
-function drawReverb(){
-    //reverb text
-    textSize(22);
-    textStyle(ITALIC);
-    strokeWeight(0);
-    fill(255);
-    text("Reverb", sliderStart, reverbY - 40);
-
-    //reverb slider
-    strokeWeight(5);
-    line(sliderStart, reverbY, sliderStop, reverbY);
-    ellipse(reverbX, reverbY, sliderBallRadius*2);
-}
-
 //audio direction changes as direction slider changes
 function changeDirection(){
-    if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
+    if (mouseY > (panY+sliderHeight/2 - sliderBallRadius) && mouseY < (panY+sliderHeight/2 + sliderBallRadius)) {
         panX = constrain(mouseX, sliderStart, sliderStop);
         var dir = map(panX, sliderStart, sliderStop, -1.0,1.0);
         panLevel = dir;
@@ -912,7 +887,7 @@ function changeDirection(){
 
 //frequency changes as frequency slider changes
 function changeFrequency(){
-    if (mouseY > (frequencyY - sliderBallRadius) && mouseY < (frequencyY + sliderBallRadius)) {
+    if (mouseY > (frequencyY+sliderHeight/2 - sliderBallRadius) && mouseY < (frequencyY+sliderHeight/2 + sliderBallRadius)) {
         frequencyX = constrain(mouseX, sliderStart, sliderStop);
         let level = map(frequencyX, sliderStart, sliderStop, 20,20000);
         filter.freq(level);
@@ -923,7 +898,7 @@ function changeFrequency(){
 
 //reverb changes as reverb slider changes
 function changeReverb(){
-    if (mouseY > (reverbY - sliderBallRadius) && mouseY < (reverbY + sliderBallRadius)) {
+    if (mouseY > (reverbY+sliderHeight/2 - sliderBallRadius) && mouseY < (reverbY+sliderHeight/2 + sliderBallRadius)) {
         reverbX = constrain(mouseX, sliderStart, sliderStop);
         let dryWet = constrain(map(reverbX, sliderStart, sliderStop, 0, 1), 0, 1);
         reverb.drywet(dryWet);
