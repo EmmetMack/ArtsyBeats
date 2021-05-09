@@ -129,7 +129,14 @@ var drawTriangleClicked = false;
 var drawVisualizationClicked = false;
 var drawRandomClicked = false;
 
+
+
 var canvas;
+
+var svg1 = false;
+var svg2 = false;
+var svg3 = false;
+
 
 
 function preload() {
@@ -183,6 +190,9 @@ function setup() {
     reverb.process(sound, 3, 2);
     visualizationColor = document.getElementById('lineColor').value
 
+    document.getElementById('doodleIcon').style.filter = "invert(100%)";
+    document.getElementById('doodleButton').style.backgroundColor = 'white';
+    document.getElementById('doodleButton').style.color = 'black';
 }
 
 function draw() {
@@ -197,19 +207,21 @@ function draw() {
         sliderButtonClicked = true;
         bounceCircleButtonClicked = false;
         drawCurveButtonClicked = false;
-        changeIconColor('sliderIcon');
+        changeIconColor('sliderIcon','bounceIcon','doodleIcon', 'sliderButton', 'bounceButton', 'doodleButton');
     }
     //switch manipulation method to bounce circle
-    document.getElementById('bounceCircle').onclick = function() {
+    document.getElementById('bounceButton').onclick = function() {
         sliderButtonClicked = false;
         bounceCircleButtonClicked = true;
         drawCurveButtonClicked = false;
+        changeIconColor('bounceIcon','sliderIcon','doodleIcon','bounceButton', 'sliderButton', 'doodleButton');
     }
     //switch manipulation method to draw curve
-    document.getElementById('drawCurve').onclick = function() {
+    document.getElementById('doodleButton').onclick = function() {
         sliderButtonClicked = false;
         bounceCircleButtonClicked = false;
         drawCurveButtonClicked = true;
+        changeIconColor('doodleIcon','bounceIcon','sliderIcon', 'doodleButton', 'bounceButton', 'sliderButton');
     }
 
     document.getElementById('rectangleButton').onclick = function() {
@@ -218,6 +230,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('rectangleButton');
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -226,6 +239,7 @@ function draw() {
         drawEllipseClicked = true;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('ellipseButton');
     }
 
     document.getElementById('triangleButton').onclick = function() {
@@ -234,6 +248,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('triangleButton');
     }
 
     document.getElementById('randomButton').onclick = function() {
@@ -242,6 +257,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = true;
+        changeBorderColor('randomButton');
     }
 
     document.getElementById('visualizationButton').onclick = function() {
@@ -250,6 +266,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = true;
         drawRandomClicked = false;
+        changeBorderColor('visualizationButton');
     }
 
     document.getElementById('lineColor').onchange = function() {
@@ -281,13 +298,76 @@ function draw() {
 
 //click to change color of visualization button border
 //doesn't work yet
-function fnChangeBorder(){
-    // document.getElementById(imageId).style.borderColor="#6F4EAB";
-    //console.log("clicked");
+function changeBorderColor(clickedId){
+    for (var i = 0; i < 4; i++){
+        document.querySelectorAll(".visualizationButtons img")[i].style.border="2px solid #FFFFFF";
+    }
+    document.getElementById(clickedId).style.border="3px solid #6F4EAB";
+
 }
 
-function changeIconColor(){
-    document.getElementById('sliderIcon').style.filter = "invert(90%) sepia(37%) saturate(3289%) hue-rotate(122deg) brightness(103%) contrast(107%)";
+function sliderButtonHover() {
+    if (!sliderButtonClicked) {
+        document.getElementById('sliderIcon').style.filter = "invert(100%)";
+        document.getElementById('sliderButton').style.backgroundColor = 'white';
+        document.getElementById('sliderButton').style.color = 'black';
+    }
+}
+
+function bounceButtonHover() {
+    if (!bounceCircleButtonClicked) {
+        document.getElementById('bounceIcon').style.filter = "invert(100%)";
+        document.getElementById('bounceButton').style.backgroundColor = 'white';
+        document.getElementById('bounceButton').style.color = 'black';
+    }
+}
+
+function doodleButtonHover() {
+    if (!drawCurveButtonClicked) {
+        document.getElementById('doodleIcon').style.filter = "invert(100%)";
+        document.getElementById('doodleButton').style.backgroundColor = 'white';
+        document.getElementById('doodleButton').style.color = 'black';
+
+    }
+}
+
+function sliderButtonUnhover() {
+    if (!sliderButtonClicked) {
+        document.getElementById('sliderIcon').style.filter = "invert(0%)";
+        document.getElementById('sliderButton').style.backgroundColor = 'black';
+        document.getElementById('sliderButton').style.color = 'white';
+    }
+}
+
+function bounceButtonUnhover() {
+    if (!bounceCircleButtonClicked) {
+        document.getElementById('bounceIcon').style.filter = "invert(0%)";
+        document.getElementById('bounceButton').style.backgroundColor = 'black';
+        document.getElementById('bounceButton').style.color = 'white';
+    }
+}
+
+function doodleButtonUnhover() {
+    if (!drawCurveButtonClicked) {
+        document.getElementById('doodleIcon').style.filter = "invert(0%)";
+        document.getElementById('doodleButton').style.backgroundColor = 'black';
+        document.getElementById('doodleButton').style.color = 'white';
+    }
+}
+
+function changeIconColor(icon1, icon2, icon3, button1, button2, button3){
+    document.getElementById(icon1).style.filter = "invert(100%)";
+    document.getElementById(button1).style.backgroundColor = 'white';
+    document.getElementById(button1).style.color = 'black';
+
+
+    document.getElementById(icon2).style.filter = "invert(0%)";
+    document.getElementById(button2).style.backgroundColor = 'black';
+    document.getElementById(button2).style.color = 'white';
+
+    document.getElementById(icon3).style.filter = "invert(0%)";
+    document.getElementById(button3).style.backgroundColor = 'black';
+    document.getElementById(button3).style.color = 'white';
 
 }
 

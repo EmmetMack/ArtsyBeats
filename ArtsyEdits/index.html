@@ -29,11 +29,11 @@
 <div>
     <!-- title box-->
     <div>
-        <div id = 'titleBox'>
+        <div id='titleBox'>
             <img src="assets/title_image.png" id ="titleImage"/>
         </div>
-        <div>
-            <small>toilet.wav uploaded</small>
+        <div class="loaded">
+            <small>toilet.wav loaded</small>
         </div>
     </div>
 
@@ -47,11 +47,11 @@
                 <h3>Select your visualization</h3>
                 <div class="visualizationButtons">
 <!--                    '<input type="button" onClick="gotoNode(\'' + result.name + '\')" />'-->
-                    <img src="assets/rectangle_visualization.png" id="rectangleButton" onclick="fnChangeBorder()">
-                    <img src = "assets/ellipse_visualization.png" id="ellipseButton" onclick="fnChangeBorder('ellipseButton')"/>
-                    <img src = "assets/triangle_visualization.png" id = "triangleButton" onclick="fnChangeBorder('triangleButton')"/>
-                    <img src="assets/random_visualization.png" id="randomButton" onclick="fnChangeBorder('randomButton')"/>
-                    <img src="assets/circles_visualization.png" id ="visualizationButton" onclick="fnChangeBorder('visualizationButton')"/>
+                    <img src="assets/rectangle_visualization.png" id="rectangleButton">
+                    <img src = "assets/ellipse_visualization.png" id="ellipseButton">
+                    <img src = "assets/triangle_visualization.png" id = "triangleButton">
+                    <img src="assets/random_visualization.png" id="randomButton">
+                    <img src="assets/circles_visualization.png" id ="visualizationButton">
                 </div>
 
                 <div class="instructionBox">
@@ -72,9 +72,9 @@
             <div>
                 <h3>Select manipulation</h3>
                 <div class="manipulationButtons">
-                    <button type="button" id="sliderButton"><object class="svg" id="sliderIcon" data="assets/slider.svg" width="19" height="17"></object>&nbsp;&nbsp;&nbsp;Slider</button>
-                    <button type="button" id="bounceCircle"><object class="svg" data="assets/bounce.svg" width="20" height="15"></object>&nbsp;&nbsp;&nbsp;Bounce</button>
-                    <button type="button" id="drawCurve"><object class="svg" data="assets/doodle.svg" width="19" height="18"></object>&nbsp;&nbsp;&nbsp;Doodle</button>
+                    <button type="button" onmouseover="sliderButtonHover()" onmouseout="sliderButtonUnhover()" id="sliderButton"><object class="svg" id="sliderIcon" data="assets/slider.svg" width="19" height="17"></object>&nbsp;&nbsp;&nbsp;Slider</button>
+                    <button type="button" onmouseover="bounceButtonHover()" onmouseout="bounceButtonUnhover()" id="bounceButton"><object class="svg" id="bounceIcon" data="assets/bounce.svg" width="20" height="15"></object>&nbsp;&nbsp;&nbsp;Bounce</button>
+                    <button type="button" onmouseover="doodleButtonHover()" onmouseout="doodleButtonUnhover()" id="doodleButton"><object class="svg" id="doodleIcon" data="assets/doodle.svg" width="19" height="18"></object>&nbsp;&nbsp;&nbsp;Doodle</button>
                 </div>
 
                 <div class="instructionBox">
