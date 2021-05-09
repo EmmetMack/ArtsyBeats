@@ -53,7 +53,7 @@ class curve {
     }
 
     saveCoordinates(){
-        if (this.clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
             append(this.xAxis, mouseX);
             append(this.yAxis, mouseY);
         }
@@ -66,12 +66,6 @@ class curve {
                 this.xAxis[i], this.yAxis[i],
                 this.xAxis[i], sh+sy,
                 this.xAxis[i-1], sh+sy)
-        }
-    }
-
-    clickedWithinCanvas(sx, sy, sw, sh){
-        if (mouseX > sx && mouseX < sx+sw && mouseY > sy && mouseY < sy+sh){
-            return true;
         }
     }
 
@@ -122,7 +116,7 @@ var bounceCircleButtonClicked = false;
 var drawCurveButtonClicked = false;
 
 //initial animation as instruction
-var doodleAnimation;
+var doodleAnimation, bounceAnimation;
 var playDoodleAnimation = true;
 var playBounceAnimation = true;
 
@@ -140,6 +134,7 @@ function preload() {
     sound = loadSound('assets/toilet.wav');
     font = loadFont('assets/Ubuntu-Regular.ttf');
     doodleAnimation = loadImage("assets/doodleAnimation.gif");
+    bounceAnimation = loadImage("assets/bounceAnimation.gif");
 }
 
 function windowResize() {
@@ -294,12 +289,35 @@ function draw() {
     }
 }
 
+//on bounce and doodle, determine if clicked within canvas rectangle
+function clickedWithinCanvas(sx, sy, sw, sh){
+    if (mouseX > sx && mouseX < sx+sw && mouseY > sy && mouseY < sy+sh){
+        return true;
+    }
+}
+
 //click to change color of visualization button border
 function changeBorderColor(clickedId){
     for (var i = 0; i < 4; i++){
         document.querySelectorAll(".visualizationButtons img")[i].style.border="2px solid #FFFFFF";
     }
     document.getElementById(clickedId).style.border="3px solid #6F4EAB";
+
+}
+
+//change icon color of manipulation buttons
+function changeIconColor(clickedIcon, unClickedIcon1, unClickedIcon2, clickedButton, unClickedButton1, unClickedButton2){
+    document.getElementById(clickedIcon).style.filter = "invert(100%)";
+    document.getElementById(clickedButton).style.backgroundColor = 'white';
+    document.getElementById(clickedButton).style.color = 'black';
+
+    document.getElementById(unClickedIcon1).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton1).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton1).style.color = 'white';
+
+    document.getElementById(unClickedIcon2).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton2).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton2).style.color = 'white';
 
 }
 
@@ -349,21 +367,6 @@ function doodleButtonUnhover() {
         document.getElementById('doodleButton').style.backgroundColor = 'black';
         document.getElementById('doodleButton').style.color = 'white';
     }
-}
-
-function changeIconColor(clickedIcon, unClickedIcon1, unClickedIcon2, clickedButton, unClickedButton1, unClickedButton2){
-    document.getElementById(clickedIcon).style.filter = "invert(100%)";
-    document.getElementById(clickedButton).style.backgroundColor = 'white';
-    document.getElementById(clickedButton).style.color = 'black';
-
-    document.getElementById(unClickedIcon1).style.filter = "invert(0%)";
-    document.getElementById(unClickedButton1).style.backgroundColor = 'black';
-    document.getElementById(unClickedButton1).style.color = 'white';
-
-    document.getElementById(unClickedIcon2).style.filter = "invert(0%)";
-    document.getElementById(unClickedButton2).style.backgroundColor = 'black';
-    document.getElementById(unClickedButton2).style.color = 'white';
-
 }
 
 //math equations to draw one visualization
@@ -566,7 +569,6 @@ function randomNumber(min, max) {
 
 let sides = randomNumber(4, 15);
 
-
 function drawRandom() {
     angleMode(RADIANS);
 
@@ -595,25 +597,23 @@ function drawRandom() {
     }
 }
 
-function mouseDragged(){
-
-}
-
 function mousePressed(){
     //create a new curve and append to curveArray
     if (bounceCircleButtonClicked == true){
-        bar1.drag(mouseX, mouseY);
-        bar2.drag(mouseX, mouseY);
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+            playBounceAnimation = false;
+            bar1.drag(mouseX, mouseY);
+            bar2.drag(mouseX, mouseY);
+        }
     }
     //create a new curve and reset curve
     if (drawCurveButtonClicked == true){
-        playDoodleAnimation = false;
         newCurve = new curve();
         newCurveExist = true;
-        if (newCurve.clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+            playDoodleAnimation = false;
             newCurve.draw();
         }
-
     }
 }
 
@@ -791,6 +791,15 @@ function drawBounceCircle(){
     bar2.display(mouseX, mouseY, rectX, rectY, rectW, rectH);
     bar1.bounce();
     bar2.bounce();
+
+    //draw animation
+    if (playBounceAnimation){
+        image(bounceAnimation, bar1.x+bar1.width, bar1.y+bar1.height/3, bounceAnimation.width/6, bounceAnimation.height/6);
+        push();
+        scale(-1.0, 1.0);
+        image(bounceAnimation, -bar2.x,bar2.y+bar2.height/3,bounceAnimation.width/6, bounceAnimation.height/6);
+        pop();
+    }
 
     //draw circle
     fill(255);
