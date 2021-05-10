@@ -36,7 +36,8 @@ var angle = 0;
 var ellipseR = 25;
 var ellipseX, ellipseY;
 //initiate ellipse velocity with a random value
-var ellipseDeltaX = Math.floor(Math.random() * (5 - (-5)) + (-5)); ellipseDeltaY = Math.floor(Math.random() * (5 - (-5)) + (-5));
+var ellipseDeltaX = Math.floor(Math.random() * (5 - (-5)) + (-5));
+var ellipseDeltaY = Math.floor(Math.random() * (5 - (-5)) + (-5));
 
 //doodle variables
 var newCurve;
@@ -694,11 +695,9 @@ class bar {
 
     display(px, py, sx, sy, sw, sh){
         if (this.dragging){
-
             //move bar when dragging
             this.x = this.offsetX + px;
             this.y = this.offsetY + py;
-            print(this.x, this.y);
         }
         fill(111,78,171);
         noStroke();
@@ -741,6 +740,7 @@ class bar {
         if (d <= ellipseR && testingY == true){
             ellipseDeltaY = -ellipseDeltaY;
         }
+
     }
 
     drag(px, py){
