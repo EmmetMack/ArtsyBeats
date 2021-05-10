@@ -1,7 +1,7 @@
 var sound, amplitude, frequency, fft, font;
 
 //slider variables
-var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
+var sliderStart = 0; sliderStop = 0; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
 //ball on the slider
 var sliderHeight = 50; sliderBreak = 150;
 var panX = 20, panY = 75;
@@ -13,7 +13,6 @@ var sliderBallRadius = 12;
 // set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
 // change style, add in visualization images as the buttons for them
 // add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
-
 var rectX = 20;
 var rectY = 20; //= 20 20 + rectH
 var rectW = 550;
@@ -281,7 +280,7 @@ function draw() {
     } else if (drawTriangleClicked == true) {
         drawTriangle();
     } else if (drawVisualizationClicked == true) {
-        visualizeSliders();
+        drawVisualization();
     } else if (drawEllipseClicked == true) {
         drawEllipse();
     } else {
@@ -366,65 +365,6 @@ function doodleButtonUnhover() {
         document.getElementById('doodleIcon').style.filter = "invert(0%)";
         document.getElementById('doodleButton').style.backgroundColor = 'black';
         document.getElementById('doodleButton').style.color = 'white';
-    }
-}
-
-//math equations to draw one visualization
-function drawVisualization1() {
-    angleMode(DEGREES)
-    //get&map amplitude
-    var ampLevel = amplitude.getLevel();
-    var drawLine = map(ampLevel, 0, 0.1, 100, 800);
-    //astroid
-    beginShape();
-    // stroke(163, 214, 245);
-    stroke(visualizationColor)
-    strokeWeight(0.5);
-    noFill();
-    translate(vizX + (vizW/2), vizY + (vizH/2));
-    for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
-        if (width > 500) {
-            LimMouseX = constrain(drawLine*2, 0, vizX + vizW);
-            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
-        } else {
-            LimMouseX = constrain(drawLine*2, 0, width-20);
-            var a = map(LimMouseX, 0, width-20, 0, 60);
-        }
-        // LimMouseX = constrain(drawLine*2, 0, width-20);
-        // var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
-        var theta = map(i, 0, drawLine*2, 20, 360);
-        var x = 2 * a * cos(theta) + a * cos(2 * theta);
-        var y = 2 * a * sin(theta) - a * sin(2 * theta);
-        vertex(x, y);
-        endShape();
-        rotate(drawLine*2); //rotate according to position of mouseX
-    }
-}
-
-//math equations to draw one visualization
-function drawVisualization2(parameter1, parameter2){
-    angleMode(DEGREES)
-    //Epicycloid Involute
-    beginShape();
-    // stroke(242, 194, 203);
-    stroke(visualizationColor)
-    strokeWeight(0.5);
-    noFill();
-    for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
-        if (width > 500) {
-            LimMouseX = constrain(parameter1, 0, vizX + vizW);
-            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
-        } else {
-            LimMouseX = constrain(parameter1, 0, width-20);
-            var a = map(LimMouseX, 0, width-20, 0, 60);
-        }
-
-        var theta = map(i, 0, parameter1/5, 20, 360);
-        var b = map(parameter2, 0, height, 0, 50);
-        var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
-        var y2 = (a+b)*sin(theta) - b*sin(((a+b)/b)*theta);
-        vertex(x2, y2);
-        endShape();
     }
 }
 
@@ -594,6 +534,67 @@ function drawRandom() {
         noFill()
         polygon(70 * panLevel, (size), widthFreq * .75, sides)
         pop();
+    }
+}
+
+function drawVisualization(){
+    drawVisualization1();
+    //drawVisualization2(frequencyX, reverbX);
+}
+
+//math equations to draw one visualization
+function drawVisualization1() {
+    angleMode(DEGREES)
+    //get&map amplitude
+    var ampLevel = amplitude.getLevel();
+    var drawLine = map(ampLevel, 0, 0.1, 100, 800);
+    //astroid
+    beginShape();
+    stroke(visualizationColor)
+    strokeWeight(0.5);
+    noFill();
+    translate(vizX + (vizW/2), vizY + (vizH/2));
+    for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
+        if (width > 500) {
+            LimMouseX = constrain(drawLine*2, 0, vizX + vizW);
+            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(drawLine*2, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+        // LimMouseX = constrain(drawLine*2, 0, width-20);
+        // var a = map(LimMouseX, 0, width-20, 10, 60); //relate to mouseX
+        var theta = map(i, 0, drawLine*2, 20, 360);
+        var x = 2 * a * cos(theta) + a * cos(2 * theta);
+        var y = 2 * a * sin(theta) - a * sin(2 * theta);
+        vertex(x, y);
+        endShape();
+        rotate(drawLine*2); //rotate according to position of mouseX
+    }
+}
+
+//math equations to draw one visualization
+function drawVisualization2(parameter1, parameter2){
+    angleMode(DEGREES)
+    //Epicycloid Involute
+    beginShape();
+    stroke(visualizationColor)
+    strokeWeight(0.5);
+    noFill();
+    for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
+        if (width > 500) {
+            LimMouseX = constrain(parameter1, 0, vizX + vizW);
+            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
+        } else {
+            LimMouseX = constrain(parameter1, 0, width-20);
+            var a = map(LimMouseX, 0, width-20, 0, 60);
+        }
+        var theta = map(i, 0, parameter1/5, 20, 360);
+        var b = map(parameter2, 0, height, 0, 50);
+        var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
+        var y2 = (a+b)*sin(theta) - b*sin(((a+b)/b)*theta);
+        vertex(x2, y2);
+        endShape();
     }
 }
 
@@ -876,12 +877,6 @@ function drawSlider(parameterX, parameterY, labelText, labelOffset){
     noStroke();
     fill(111,78,171);
     ellipse(parameterX, parameterY+sliderHeight/2, sliderBallRadius*2);
-}
-
-//draw visualization corresponding to slider values
-function visualizeSliders(){
-    drawVisualization1();
-    drawVisualization2(frequencyX, reverbX);
 }
 
 //audio direction changes as direction slider changes
