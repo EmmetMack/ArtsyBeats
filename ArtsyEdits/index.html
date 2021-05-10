@@ -2,79 +2,106 @@
 <html lang="">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
-  
-  <title>sound manipulation</title>
-  <style>
-    body {
-      padding: 100 px;
-      margin: 100 px;
-    }
-  </style>
-  <script src="addons/p5.js"></script>
-  <script src="addons/p5.sound.js"></script>
-  <script src="sketch.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
 
-  <!-- CDN for bootstrap-->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <title>ArtsyEdits</title>
+    <style>
+        body {
+            padding: 100 px;
+            margin: 100 px;
+        }
+    </style>
+    <script src="addons/p5.js"></script>
+    <script src="addons/p5.sound.js"></script>
+    <script src="sketch.js"></script>
 
-  <link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
+
+   <!-- &lt;!&ndash; CDN for bootstrap&ndash;&gt; -->
+<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script> -->
+
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
+    <link rel="stylesheet" type="text/css" href="styles.css" media="screen"/>
 </head>
 
 <body style="background-color:black;">
-  <div class = "container-fluid">
-    <div class = 'row d-flex justify-content-center'>
-      <div class = "col-xs-12">
-        <img src="assets/title_image.png" id ="titleImage"/>
-      </div>
+<div>
+    <!-- title box-->
+    <div>
+        <div id='titleBox'>
+            <img src="assets/title_image.png" id ="titleImage"/>
+        </div>
+        <div class="loaded">
+            <small><object class="svg" data="assets/file.svg" width="14" height="18"></object>&nbsp; toilet.wav loaded</small>
+        </div>
     </div>
-    <div class = "row d-flex justify-content-center">
-      <div class ="col-xs-12">
-        <h1 style="color:white;">Time: 3:00</h1>
-        <button type="button" id="soundButton">Play Sound</button>
-        <button type="button" id="sliderButton">Slider</button>
-        <button type="button" id="bounceCircle">BounceCircle</button>
-        <button type="button" id="drawCurve">DrawCurve</button>
-      </div>
-    </div>
-    <div class = "row d-flex justify-content-center">
-      <div class ="col-xs-12 visualizationButtons">
-        <!-- <img src="assets/button.png" alt="Visualization buttons" width="595" height="62"> -->
-        <h3>Select Visualization:</h3>
-        <!-- <button type="button" id="rectangleButton">Rectangle</button>
-        <button type="button" id="ellipseButton">Ellipse</button>
-        <button type="button" id="triangleButton">Trangle</button>
-        <button type="button" id="randomButton">Random Shape</button>
-        <button type="button" id="visualizationButton">Visualization</button> -->
-        <img src="assets/rectangle_visualization.png" id="rectangleButton"/>
-        <img src = "assets/ellipse_visualization.png" id="ellipseButton"/>
-        <img src = "assets/triangle_visualization.png" id = "triangleButton"/>
-        <img src="assets/random_visualization.png" id="randomButton"/>
-        <img src="assets/circles_visualization.png" id ="visualizationButton"/>
 
-        <h1 style="color:white;" id="countdown"></h1>
+    <!-- horizontal line-->
+    <hr>
 
-        <label for="lineColor">Change the color for your visualization</label>
-        <input type="color" id="lineColor" name="linecolor" value="#6952A5">
-      </div>
-    </div>
-    <div class = 'row d-flex justify-content-center'>
-      <div class = "col-xs-12">
-        <br>
-        <button type="button" id ="submit">Submit</button>
-      </div>
-    </div>
-    <div class = "row d-flex justify-content-center">
-      <div class = "col-xs-12">
-        <!-- <div id="divforCanvas">
-         
-        </div> -->
+    <div id="bottom">
+        <!-- visualization box-->
+        <div id="visualizationBox">
+            <div>
+                <h3>Select your visualization</h3>
+                <div class="visualizationButtons">
+<!--                    '<input type="button" onClick="gotoNode(\'' + result.name + '\')" />'-->
+                    <img src="assets/rectangle_visualization.png" id="rectangleButton">
+                    <img src = "assets/ellipse_visualization.png" id="ellipseButton">
+                    <img src = "assets/triangle_visualization.png" id = "triangleButton">
+                    <img src="assets/random_visualization.png" id="randomButton">
+                    <img src="assets/circles_visualization.png" id ="visualizationButton">
+                </div>
 
-      </div>
+                <div class="instructionBox">
+                    <i>* Select different visualizations to change animation.</i>
+                </div>
+                <div>
+                    <label for="lineColor">Change the color for your visualization</label>
+                    <input type="color" id="lineColor" name="linecolor" value="#6952A5">
+                </div>
+
+            </div>
+        </div>
+
+        <!--vertical bar-->
+        <!--<div class="vl"></div>-->
+
+        <!-- manipulation box-->
+        <div id="manipulationBox">
+            <div>
+                <h3>Select manipulation</h3>
+                <div class="manipulationButtons">
+                    <button type="button" onmouseover="sliderButtonHover()" onmouseout="sliderButtonUnhover()" id="sliderButton"><object class="svg" id="sliderIcon" data="assets/slider.svg" width="19" height="17"></object>&nbsp;&nbsp;&nbsp;Slider</button>
+                    <button type="button" onmouseover="bounceButtonHover()" onmouseout="bounceButtonUnhover()" id="bounceButton"><object class="svg" id="bounceIcon" data="assets/bounce.svg" width="20" height="15"></object>&nbsp;&nbsp;&nbsp;Bounce</button>
+                    <button type="button" onmouseover="doodleButtonHover()" onmouseout="doodleButtonUnhover()" id="doodleButton"><object class="svg" id="doodleIcon" data="assets/doodle.svg" width="19" height="18"></object>&nbsp;&nbsp;&nbsp;Doodle</button>
+                </div>
+
+                <div class="instructionBox">
+                    <i>* Manipulate sound to see how your visual changes in real-time. </i>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </div>
+    <!-- p5 canvas -->
+    <div>
+        <div id="p5">
+        </div>
+    </div>
+
+    <!-- submit + play button -->
+    <div class="primaryButtons">
+        <div id="playSoundButtonBox">
+            <button type="button" id="playSoundButton"><img class="primaryIcon" src="assets/play.svg" width="22" height="24"></img>&nbsp;&nbsp;Visual & Sound</button>
+        </div>
+        <div id="submitButtonBox">
+            <button type="button" id="submitButton"><img class="primaryIcon" src="assets/submit.svg" width="20" height="20"></img>&nbsp; Submit </button>
+        </div>
+    </div>
+
+</div>
 </body>
 
 </html>

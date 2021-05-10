@@ -1,60 +1,231 @@
 h3 {
     color: white;
+    font-size: 40px;
+    font-family: Ubuntu;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 28px;
 }
 
-label { 
+small {
+    color: #a0a0a0;
+    font-family: Ubuntu;
+    font-size: 20px;
+}
+
+
+
+label {
+    color: white;
+    font-family: Ubuntu;
+    font-size: medium;
+}
+
+hr{
+    width: 95%;
+    border: none;
+    height: 3px;
+    background-color: white;
+}
+
+#titleBox{
+    display: inline-block;
+    justify-content: space-between;
+    margin-left: 3%;
+}
+
+.svg {
+    margin-left: 5px;
+}
+
+#bottom{
+    margin-left: 3%;
+}
+
+#visualizationBox, #manipulationBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 7%;
+}
+
+.vl {
+    vertical-align: top;
+    display: inline-block;
+    border-left: 4px solid white;
+    height: 300px;
+    margin-top: 30px;
+}
+
+.manipulationButtons, .visualizationButtons{
+    height: 90px;
+}
+
+
+.instructionBox{
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-family: Ubuntu;
+    font-size: medium;
+}
+
+i{
     color: white;
 }
 
-h1 {
+.manipulationButtons button{
+    background-color: black;
+    border: 1px solid white;
     color: white;
+    padding: 18px 40px;
+    text-align: center;
+    text-decoration: none;
+    font-family: Ubuntu;
+    display: inline-block;
+    font-size: x-large;
+    cursor: pointer;
+    float: left;
 }
 
-button {
-    border-radius: 5px;
-    margin: 2px;
-    padding: 5px;
-    background: #5954A4;
+
+
+#sliderButton{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+#doodleButton{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.primaryButtons button{
     background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
     background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
     background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
+    border: none;
     color: white;
+    padding: 20px 40px;
+    border-radius: 50px;
+    font-family: Ubuntu;
+    font-size: x-large;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
 }
+
+#playSoundButtonBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 5%;
+    text-align: center;
+}
+
+#submitButtonBox{
+    vertical-align: top;
+    display: inline-block;
+    width: 40%;
+    margin-left: 5%;
+    text-align: center;
+}
+
 
 #title {
     font-family: Monoton;
 }
 
-.visualizationButtons img {
-   border: 2px solid #5954A4;
+.visualizationButtons img{
+    border: 2px solid white;
+    border-radius: 5px;
+    margin-left: 10px;
 }
 
 
 @media only screen and (min-width: 1490px)
 {
-}
-@media only screen and (max-width: 1490px) and (min-width: 1366px)
-{
-}
-@media only screen and (max-width: 1366px) and (min-width: 1280px) 
-{
-}
-@media only screen and (max-width: 1280px) and (min-width: 1024px) 
-{
-}
-@media only screen and (max-width: 1024px) and (min-width: 768px) 
-{
-    #titleImage  {
-        width: 100%;
-        height: auto;
+    .loaded{
+        display: inline-block;
+        float: right;
+        margin-right: 3%;
+        margin-top: 4.5%;
     }
 
-     .visualizationButtons img {
-         width: auto;
-         height: auto;
-     }
+
+    #visualizationBox, #manipulationBox{
+        vertical-align: top;
+        display: inline-block;
+        width: 40%;
+        margin-left: 7%;
+    }
+
+    .manipulationButtons button:not(:last-child){
+        border-right: none;
+    }
 }
-@media only screen and (max-width: 768px) and (min-width: 375px) 
+@media only screen and (max-width: 1490px) and (min-width: 1366px)
+ {   .loaded {
+        display: inline-block;
+        float: right;
+        margin-right: 3%;
+        margin-top: 4.5%;
+    }
+
+
+    #visualizationBox, #manipulationBox{
+        vertical-align: top;
+        display: inline-block;
+        width: 40%;
+        margin-left: 7%;
+    }
+
+    .manipulationButtons button:not(:last-child){
+        border-right: none;
+    }
+}
+@media only screen and (max-width: 1366px) and (min-width: 1280px)
+{
+    .loaded {
+        display: inline-block;
+        float: right;
+        margin-right: 3%;
+        margin-top: 4.5%;
+    }
+
+    
+    #visualizationBox, #manipulationBox{
+        vertical-align: top;
+        display: inline-block;
+        width: 40%;
+        margin-left: 7%;
+    }
+
+    .manipulationButtons button:not(:last-child){
+        border-right: none;
+    }
+}
+@media only screen and (max-width: 1280px) and (min-width: 1024px)
+{
+    .loaded {
+        display: inline-block;
+        float: right;
+        margin-right: 3%;
+        margin-top: 4.5%;
+    }
+
+    
+    #visualizationBox, #manipulationBox{
+        vertical-align: top;
+        display: inline-block;
+        width: 40%;
+        margin-left: 7%;
+    }
+
+    .manipulationButtons button:not(:last-child){
+        border-right: none;
+    }
+}
+@media only screen and (max-width: 1024px) and (min-width: 768px)
 {
     #titleImage {
         width: 100%;
@@ -64,5 +235,179 @@ button {
     .visualizationButtons img {
         width: auto;
         height: auto;
+    }
+
+    .loaded{
+        display: inline-block;
+        float: left;
+        margin-left: 3%;
+        margin-top: 4.5%;
+    }
+
+
+    #visualizationBox {
+        text-align: top;
+        display: inline-block;
+        width: 95%;
+        margin-left: 7%;
+        margin-top: 5%;
+        margin-right: 7%;
+    }
+
+    #manipulationBox {
+        text-align: top;
+        display: block;
+        width: 100%;
+        margin-left: 7%;
+        margin-top: 5%;
+        margin-right: 7%; 
+    }
+
+    .instructionBox{
+        margin-top: 40%;
+        margin-bottom: 20px;
+        font-family: Ubuntu;
+        font-size: medium;
+    }
+
+    .manipulationButtons button{
+        background-color: black;
+        border: 1px solid white;
+        color: white;
+        padding: 18px 40px;
+        text-align: center;
+        text-decoration: none;
+        font-family: Ubuntu;
+        display: inline-block;
+        font-size: x-large;
+        cursor: pointer;
+        float: left;
+        width: 75%;
+    }
+
+    #playSoundButtonBox{
+        display: block;
+        width: 100%;
+        /* margin-left: auto; */
+        margin: auto;
+        text-align: center;
+    }
+    
+    #submitButtonBox{
+        display: block;
+        width: 100%;
+        /* margin-left: auto; */
+        margin: auto;
+        margin-top: 5%;
+        text-align: center;
+    }
+    
+    .primaryButtons button{
+        background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+        background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+        background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
+        border: none;
+        color: white;
+        padding: 20px 40px;
+        border-radius: 50px;
+        font-family: Ubuntu;
+        font-size: x-large;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        width: 80%;
+    }
+}
+@media only screen and (max-width: 768px) and (min-width: 375px)
+{
+    #titleImage {
+        width: 100%;
+        height: auto;
+    }
+
+    .visualizationButtons img {
+        width: auto;
+        height: auto;
+    }
+
+    .loaded{
+        display: inline-block;
+        float: left;
+        margin-left: 3%;
+        margin-top: 4.5%;
+    }
+
+
+    #visualizationBox {
+        text-align: top;
+        display: inline-block;
+        width: 95%;
+        margin-left: 7%;
+        margin-top: 5%;
+        margin-right: 7%;
+    }
+
+    #manipulationBox {
+        text-align: top;
+        display: block;
+        width: 100%;
+        margin-left: 7%;
+        margin-top: 5%;
+        margin-right: 7%; 
+    }
+
+    .instructionBox{
+        margin-top: 40%;
+        margin-bottom: 20px;
+        font-family: Ubuntu;
+        font-size: medium;
+    }
+
+    .manipulationButtons button{
+        background-color: black;
+        border: 1px solid white;
+        color: white;
+        padding: 18px 40px;
+        text-align: center;
+        text-decoration: none;
+        font-family: Ubuntu;
+        display: inline-block;
+        font-size: x-large;
+        cursor: pointer;
+        float: left;
+        width: 75%;
+    }
+
+    #playSoundButtonBox{
+        display: block;
+        width: 100%;
+        /* margin-left: auto; */
+        margin: auto;
+        text-align: center;
+    }
+    
+    #submitButtonBox{
+        display: block;
+        width: 100%;
+        /* margin-left: auto; */
+        margin: auto;
+        margin-top: 5%;
+        text-align: center;
+    }
+
+    .primaryButtons button{
+        background: -moz-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+        background: -webkit-linear-gradient(left, #5954A4 0%, #8AD5EA 100%);
+        background: linear-gradient(to right, #5954A4 0%, #8AD5EA 100%);
+        border: none;
+        color: white;
+        padding: 20px 40px;
+        border-radius: 50px;
+        font-family: Ubuntu;
+        font-size: x-large;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        width: 80%;
     }
 }

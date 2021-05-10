@@ -1,23 +1,27 @@
-var sound, amplitude, frequency, fft;
+var sound, amplitude, frequency, fft, font;
 
 //slider variables
-var sliderLength = 355
-var sliderStart = 20; sliderStop = 355; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
-    //ball on the slider
+var sliderStart = 0; sliderStop = 0; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
+//ball on the slider
+var sliderHeight = 50; sliderBreak = 150;
 var panX = 20, panY = 75;
 var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
-var sliderBallRadius = 10;
+var sliderBallRadius = 12;
 
 //TO-DO:
 // set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
-// change style, add in visualization images as the buttons for them    
-// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added 
+// change style, add in visualization images as the buttons for them
+// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
+var rectX = 20;
+var rectY = 20; //= 20 20 + rectH
+var rectW = 550;
+var rectH = 375;
 
-var rectW = 375; 
-var rectH = 375; //= 375; = 375
-var startX; 
-var startY; //= 20 20 + rectH
+var vizX = 0;
+var vizY = 20;
+var vizW = 375;
+var vizH = 375;
 
 var panLevel = 1;
 
@@ -28,19 +32,14 @@ var visualizationColor;
 //angle for rotating the shape
 var angle = 0;
 
-//BounceCircle variables
+//bounce variables
 var ellipseR = 25;
-var ellipseX = 20 + (335/2), ellipseY = (335/2) + 20;
-    //ellipse velocity
-var ellipseDeltaX = 0; ellipseDeltaY = 0;
+var ellipseX, ellipseY;
+//initiate ellipse velocity with a random value
+var ellipseDeltaX = Math.floor(Math.random() * (5 - (-5)) + (-5));
+var ellipseDeltaY = Math.floor(Math.random() * (5 - (-5)) + (-5));
 
-// var curveArray = [];
-
-//drawCurve variables
-var curveRectW;
-var curveRectH;
-var curveRectX;
-var curveRectY;
+//doodle variables
 var newCurve;
 var newCurveExist = false;
 class curve {
@@ -54,7 +53,7 @@ class curve {
     }
 
     saveCoordinates(){
-        if (this.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
             append(this.xAxis, mouseX);
             append(this.yAxis, mouseY);
         }
@@ -62,25 +61,11 @@ class curve {
 
     display(sx, sy, sw, sh){
         for (var i = 0; i < this.xAxis.length; i++){
+            noStroke();
             quad(this.xAxis[i-1], this.yAxis[i-1],
                 this.xAxis[i], this.yAxis[i],
                 this.xAxis[i], sh+sy,
                 this.xAxis[i-1], sh+sy)
-        }
-    }
-
-    bounce(){
-        for (var i = 0; i < this.xAxis.length; i++){
-            if (dist(ellipseX, ellipseY, this.xAxis[i], this.yAxis[i]) <= ellipseR){
-                ellipseDeltaX = -ellipseDeltaX;
-                ellipseDeltaY = -ellipseDeltaY;
-            }
-        }
-    }
-
-    clickedWithinCanvas(sx, sy, sw, sh){
-        if (mouseX > sx && mouseX < sx+sw && mouseY > sy && mouseY < sy+sh){
-            return true;
         }
     }
 
@@ -102,7 +87,7 @@ class curve {
         }
         //draw ball on animation
         fill("skyblue");
-        ellipse(this.xAxis[this.frameCount], this.yAxis[this.frameCount], 10);
+        ellipse(this.xAxis[this.frameCount], this.yAxis[this.frameCount], 15);
         this.frameCount += 1;
         if (this.frameCount == this.xAxis.length) {
             this.animating = false;
@@ -126,9 +111,14 @@ class curve {
 }
 
 //determine manipulation method
-var sliderButtonClicked = false;
-var bounceCircleButtonClicked = false;
-var drawCurveButtonClicked = true;
+var sliderButtonClicked = true;
+var bounceButtonClicked = false;
+var doodleButtonClicked = false;
+
+//initial animation as instruction
+var doodleAnimation, bounceAnimation;
+var playDoodleAnimation = true;
+var playBounceAnimation = true;
 
 //determine visualization
 var drawRectClicked = true;
@@ -139,27 +129,64 @@ var drawRandomClicked = false;
 
 var canvas;
 
-
 function preload() {
     soundFormats('mp3', 'ogg', 'wav');
     sound = loadSound('assets/toilet.wav');
+    font = loadFont('assets/Ubuntu-Regular.ttf');
+    doodleAnimation = loadImage("assets/doodleAnimation.gif");
+    bounceAnimation = loadImage("assets/bounceAnimation.gif");
 }
 
 function windowResize() {
-    console.log("window resized")
     // resizeCanvas(displayWidth, displayHeight, true);
 
     setVisualizationPosition()
-};
+}
 
 function setVisualizationPosition() {
-    console.log(displayWidth);
-    if (displayWidth < 500) { 
-        startX = 0;
-        startY = 20 + rectH;
+    if (displayWidth < 500) {
+
+        // rectX = 0;
+        // rectY = 20 + rectH;
+
+        var canvasRatio = 0.75;
+        rectX = 20;
+        rectY = 30;
+
+        rectW = displayWidth - 80; 
+        rectH = 375;
+
+        //ball of bounce
+        ellipseX = rectX + rectW/2;
+        ellipseY = rectY + rectH/2;
+        //canvas of visualization
+        vizX = 0;
+        vizY = 440;
+        //canvas of slider
+        sliderStart = rectX + 30;
+        sliderStop = rectX + rectW - sliderBreak - 30;
+        panX = sliderStart;
+        frequencyX = sliderStart;
+        reverbX = sliderStart;
+
+
     } else {
-        startX = 375;
-        startY = 20;
+        //canvas of bounce&doodle
+        var canvasRatio = 0.62;
+        rectX = displayWidth * canvasRatio;
+        rectY = 30;
+        //ball of bounce
+        ellipseX = rectX + rectW/2;
+        ellipseY = rectY + rectH/2;
+        //canvas of visualization
+        vizX = displayWidth/8;
+        vizY = 30;
+        //canvas of slider
+        sliderStart = rectX + 30;
+        sliderStop = rectX + rectW - sliderBreak - 30;
+        panX = sliderStart;
+        frequencyX = sliderStart;
+        reverbX = sliderStart;
     }
 }
 
@@ -167,10 +194,14 @@ window.addEventListener('load', setVisualizationPosition);
 window.addEventListener('resize', windowResize);
 
 function setup() {
-
     angleMode(DEGREES);
-    // createCanvas(1500,700);
-    createCanvas(displayWidth, displayHeight);
+    if (displayWidth < 1024) {
+        var myCanvas = createCanvas(displayWidth, 850);
+    } else {
+        var myCanvas = createCanvas(displayWidth, 500);
+
+    }
+    myCanvas.parent("p5");
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
     filter = new p5.BandPass();
@@ -179,33 +210,41 @@ function setup() {
     sound.connect(filter);
     reverb.process(sound, 3, 2);
     visualizationColor = document.getElementById('lineColor').value
-
+    //initially, slider is selected
+    document.getElementById('sliderIcon').style.filter = "invert(100%)";
+    document.getElementById('sliderButton').style.backgroundColor = 'white';
+    document.getElementById('sliderButton').style.color = 'black';
+    //initially, drawRect is selected
+    document.getElementById('rectangleButton').style.border="3px solid #6F4EAB";
 }
 
 function draw() {
     background(0);
 
     //click "PlaySound" to play/pause audio
-    document.getElementById('soundButton').onclick = function() {
+    document.getElementById('playSoundButton').onclick = function() {
         toggleSound();
     }
     //switch manipulation method to slider
     document.getElementById('sliderButton').onclick = function() {
         sliderButtonClicked = true;
-        bounceCircleButtonClicked = false;
-        drawCurveButtonClicked = false;
+        bounceButtonClicked = false;
+        doodleButtonClicked = false;
+        changeIconColor('sliderIcon','bounceIcon','doodleIcon', 'sliderButton', 'bounceButton', 'doodleButton');
     }
     //switch manipulation method to bounce circle
-    document.getElementById('bounceCircle').onclick = function() {
+    document.getElementById('bounceButton').onclick = function() {
         sliderButtonClicked = false;
-        bounceCircleButtonClicked = true;
-        drawCurveButtonClicked = false;
+        bounceButtonClicked = true;
+        doodleButtonClicked = false;
+        changeIconColor('bounceIcon','sliderIcon','doodleIcon','bounceButton', 'sliderButton', 'doodleButton');
     }
     //switch manipulation method to draw curve
-    document.getElementById('drawCurve').onclick = function() {
+    document.getElementById('doodleButton').onclick = function() {
         sliderButtonClicked = false;
-        bounceCircleButtonClicked = false;
-        drawCurveButtonClicked = true;
+        bounceButtonClicked = false;
+        doodleButtonClicked = true;
+        changeIconColor('doodleIcon','bounceIcon','sliderIcon', 'doodleButton', 'bounceButton', 'sliderButton');
     }
 
     document.getElementById('rectangleButton').onclick = function() {
@@ -214,6 +253,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('rectangleButton');
     }
 
     document.getElementById('ellipseButton').onclick = function() {
@@ -222,6 +262,7 @@ function draw() {
         drawEllipseClicked = true;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('ellipseButton');
     }
 
     document.getElementById('triangleButton').onclick = function() {
@@ -230,6 +271,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = false;
+        changeBorderColor('triangleButton');
     }
 
     document.getElementById('randomButton').onclick = function() {
@@ -238,6 +280,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = false;
         drawRandomClicked = true;
+        changeBorderColor('randomButton');
     }
 
     document.getElementById('visualizationButton').onclick = function() {
@@ -246,6 +289,7 @@ function draw() {
         drawEllipseClicked = false;
         drawVisualizationClicked = true;
         drawRandomClicked = false;
+        changeBorderColor('visualizationButton');
     }
 
     document.getElementById('lineColor').onchange = function() {
@@ -254,12 +298,12 @@ function draw() {
 
 
     if (sliderButtonClicked == true){
-        drawSliders();
+        slider();
         sound.rate(1);
-    } else if (bounceCircleButtonClicked == true){
-        drawBounceCircle();
-    } else if (drawCurveButtonClicked == true){
-        drawCurve();
+    } else if (bounceButtonClicked == true){
+        bounce();
+    } else if (doodleButtonClicked == true){
+        doodle();
     }
 
     if (drawRectClicked == true) {
@@ -267,7 +311,7 @@ function draw() {
     } else if (drawTriangleClicked == true) {
         drawTriangle();
     } else if (drawVisualizationClicked == true) {
-        visualizeSliders();
+        drawVisualization();
     } else if (drawEllipseClicked == true) {
         drawEllipse();
     } else {
@@ -275,6 +319,259 @@ function draw() {
     }
 }
 
+//on bounce and doodle, determine if clicked within canvas rectangle
+function clickedWithinCanvas(sx, sy, sw, sh){
+    if (mouseX > sx && mouseX < sx+sw && mouseY > sy && mouseY < sy+sh){
+        return true;
+    }
+}
+
+//click to change color of visualization button border
+function changeBorderColor(clickedId){
+    for (var i = 0; i < 5; i++){
+        document.querySelectorAll(".visualizationButtons img")[i].style.border="2px solid #FFFFFF";
+    }
+    document.getElementById(clickedId).style.border="3px solid #6F4EAB";
+
+}
+
+//change icon color of manipulation buttons
+function changeIconColor(clickedIcon, unClickedIcon1, unClickedIcon2, clickedButton, unClickedButton1, unClickedButton2){
+    document.getElementById(clickedIcon).style.filter = "invert(100%)";
+    document.getElementById(clickedButton).style.backgroundColor = 'white';
+    document.getElementById(clickedButton).style.color = 'black';
+
+    document.getElementById(unClickedIcon1).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton1).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton1).style.color = 'white';
+
+    document.getElementById(unClickedIcon2).style.filter = "invert(0%)";
+    document.getElementById(unClickedButton2).style.backgroundColor = 'black';
+    document.getElementById(unClickedButton2).style.color = 'white';
+
+}
+
+function sliderButtonHover() {
+    if (!sliderButtonClicked) {
+        document.getElementById('sliderIcon').style.filter = "invert(100%)";
+        document.getElementById('sliderButton').style.backgroundColor = 'white';
+        document.getElementById('sliderButton').style.color = 'black';
+    }
+}
+
+function bounceButtonHover() {
+    if (!bounceButtonClicked) {
+        document.getElementById('bounceIcon').style.filter = "invert(100%)";
+        document.getElementById('bounceButton').style.backgroundColor = 'white';
+        document.getElementById('bounceButton').style.color = 'black';
+    }
+}
+
+function doodleButtonHover() {
+    if (!doodleButtonClicked) {
+        document.getElementById('doodleIcon').style.filter = "invert(100%)";
+        document.getElementById('doodleButton').style.backgroundColor = 'white';
+        document.getElementById('doodleButton').style.color = 'black';
+    }
+}
+
+function sliderButtonUnhover() {
+    if (!sliderButtonClicked) {
+        document.getElementById('sliderIcon').style.filter = "invert(0%)";
+        document.getElementById('sliderButton').style.backgroundColor = 'black';
+        document.getElementById('sliderButton').style.color = 'white';
+    }
+}
+
+function bounceButtonUnhover() {
+    if (!bounceButtonClicked) {
+        document.getElementById('bounceIcon').style.filter = "invert(0%)";
+        document.getElementById('bounceButton').style.backgroundColor = 'black';
+        document.getElementById('bounceButton').style.color = 'white';
+    }
+}
+
+function doodleButtonUnhover() {
+    if (!doodleButtonClicked) {
+        document.getElementById('doodleIcon').style.filter = "invert(0%)";
+        document.getElementById('doodleButton').style.backgroundColor = 'black';
+        document.getElementById('doodleButton').style.color = 'white';
+    }
+}
+
+var widthArray = []
+var sizeArray = []
+
+function drawEllipse() {
+    angleMode(DEGREES)
+
+    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
+
+
+    let spectrum = fft.analyze()
+
+    widthFreq = spectrum[0]
+    if (widthArray.length == 5) {
+        let widthIndex = Math.floor(Math.random() * 5)
+        widthArray[widthIndex] = widthFreq
+    } else {
+        widthArray.push(widthFreq)
+    }
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, vizH);
+    if (sizeArray.length == 5) {
+        let sizeIndex = Math.floor(Math.random() * 5)
+        sizeArray[sizeIndex] = size
+    } else {
+        sizeArray.push(size)
+    }
+    noFill()
+    stroke(visualizationColor)
+    strokeWeight(4)
+    if (sizeArray.length == 5) {
+
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 5], widthArray[widthArray.length - 5])
+        rotate(angle);
+    } else if (sizeArray.length == 4) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])
+        rotate(angle);
+    } else
+    if (sizeArray.length == 3) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])
+        rotate(angle);
+    } else if (sizeArray.length == 2) {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])
+        rotate(angle);
+    } else {
+        angle = angle + (panLevel*2.5);
+        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
+        rotate(angle);
+    }
+
+}
+
+function drawRect() {
+    angleMode(DEGREES)
+    rectMode(CENTER)
+    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
+    rotate(angle);
+    angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, vizH);
+    noFill()
+    stroke(visualizationColor)
+    strokeWeight(5)
+    rect(0,0, size, widthFreq)
+
+}
+
+function polygon(x, y, radius, npoints) {
+    angleMode(RADIANS);
+
+    var angle = TWO_PI / npoints;
+
+    beginShape();
+    for (var a = 0; a < TWO_PI; a += angle) {
+        var sx = x + cos(a) * radius;
+        var sy = y + sin(a) * radius;
+        vertex(sx, sy);
+    }
+    endShape(CLOSE);
+}
+
+function drawTriangle() {
+    angleMode(RADIANS);
+
+    translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1;
+
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, vizH);
+
+    pieces = 20;
+
+    for (i = 0; i < pieces; i += 0.1) {
+
+        rotate(TWO_PI / (pieces / 2));
+
+        push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        fill(visualizationColor)
+        polygon((75 * panLevel), (widthFreq), size, 3)
+        pop();
+    }
+}
+
+function randomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let sides = randomNumber(4, 15);
+
+function drawRandom() {
+    angleMode(RADIANS);
+
+    translate(vizX + (vizW/2), vizY + (vizH/2)+ 50); //set the new origin/point of rotation
+    // translate(vizX + (vizW/2), vizY + (vizH/2)); //set the new origin/point of rotation
+    // rotate(angle);
+    // angle = angle + 1;
+
+    let spectrum = fft.analyze()
+    widthFreq = spectrum[0]
+    level = amplitude.getLevel()
+    let size = map(level, 0, 1, 0, vizH);
+
+    pieces = panLevel + 1;
+
+    for (i = 0; i < pieces; i += .5) {
+
+        rotate(TWO_PI / (pieces/2));
+
+        push();
+        strokeWeight(2)
+        stroke(visualizationColor)
+        noFill()
+        polygon(70 * panLevel, (size), widthFreq * .75, sides)
+        pop();
+    }
+}
+
+function drawVisualization(){
+    drawVisualization1();
+    //drawVisualization2(frequencyX, reverbX);
+}
 
 //math equations to draw one visualization
 function drawVisualization1() {
@@ -284,15 +581,14 @@ function drawVisualization1() {
     var drawLine = map(ampLevel, 0, 0.1, 100, 800);
     //astroid
     beginShape();
-    // stroke(163, 214, 245);
     stroke(visualizationColor)
     strokeWeight(0.5);
     noFill();
-    translate(startX + (rectW/2), startY + (rectH/2));
+    translate(vizX + (vizW/2), vizY + (vizH/2));
     for (var i = 0; i < drawLine / 2; i++) { //mouseX controls number of curves
         if (width > 500) {
-            LimMouseX = constrain(drawLine*2, 0, startX + rectW);
-            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+            LimMouseX = constrain(drawLine*2, 0, vizX + vizW);
+            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
         } else {
             LimMouseX = constrain(drawLine*2, 0, width-20);
             var a = map(LimMouseX, 0, width-20, 0, 60);
@@ -310,22 +606,20 @@ function drawVisualization1() {
 
 //math equations to draw one visualization
 function drawVisualization2(parameter1, parameter2){
-    angleMode(DEGREES)
+    angleMode(DEGREES);
     //Epicycloid Involute
     beginShape();
-    // stroke(242, 194, 203);
-    stroke(visualizationColor)
+    stroke(visualizationColor);
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
         if (width > 500) {
-            LimMouseX = constrain(parameter1, 0, startX + rectW);
-            var a = map(LimMouseX, 0, startX + rectW, 0, 60); //relate to mouseX
+            LimMouseX = constrain(parameter1, 0, vizX + vizW);
+            var a = map(LimMouseX, 0, vizX + vizW, 0, 60); //relate to mouseX
         } else {
             LimMouseX = constrain(parameter1, 0, width-20);
             var a = map(LimMouseX, 0, width-20, 0, 60);
         }
-        
         var theta = map(i, 0, parameter1/5, 20, 360);
         var b = map(parameter2, 0, height, 0, 50);
         var x2 = (a+b)*cos(theta) - b*cos(((a+b)/b)*theta);
@@ -335,209 +629,32 @@ function drawVisualization2(parameter1, parameter2){
     }
 }
 
-var widthArray = []
-var sizeArray = []
-
-function drawEllipse() {
-    angleMode(DEGREES)
-    // var rectW = 375; rectH = 375;
-    // var startX = 20 ; startY = 20 + rectH;
-
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-   
-
-    let spectrum = fft.analyze()
-    
-    widthFreq = spectrum[0]
-    if (widthArray.length == 5) {
-        let widthIndex = Math.floor(Math.random() * 5)
-        widthArray[widthIndex] = widthFreq
-    } else {
-        widthArray.push(widthFreq)
-    }
-    level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, rectH);
-    if (sizeArray.length == 5) {
-        let sizeIndex = Math.floor(Math.random() * 5)
-         sizeArray[sizeIndex] = size
-     } else {
-        sizeArray.push(size)
-    }
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    if (sizeArray.length == 5) {
-
-        angle = angle + (panLevel*2.5);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2]) 
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4]) 
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 5], widthArray[widthArray.length - 5]) 
-        rotate(angle);    
-    } else if (sizeArray.length == 4) {
-        angle = angle + (panLevel*2.5);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])  
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 4], widthArray[widthArray.length - 4])    
-        rotate(angle);
-    } else 
-    if (sizeArray.length == 3) {
-        angle = angle + (panLevel*2.5);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])  
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 3], widthArray[widthArray.length - 3])  
-        rotate(angle);
-    } else if (sizeArray.length == 2) {
-        angle = angle + (panLevel*2.5);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
-        rotate(angle);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 2], widthArray[widthArray.length - 2])   
-        rotate(angle);
-    } else {
-        angle = angle + (panLevel*2.5);
-        ellipse(0, 0 , sizeArray[sizeArray.length - 1], widthArray[widthArray.length - 1])
-        rotate(angle);
-    }
- 
-  }
-
-  function drawRect() {
-    angleMode(DEGREES)
-    // var rectW = 375; rectH = 375;
-    // var startX = 20 ; startY = 20 + rectH;
-    rectMode(CENTER)
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    rotate(angle);
-    angle = angle + (panLevel * 3); //can vary the speed of rotation based on some aspect of the sound
-    let spectrum = fft.analyze()
-    widthFreq = spectrum[0]
-    level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, rectH);
-    noFill()
-    stroke(visualizationColor)
-    strokeWeight(5)
-    rect(0,0, size, widthFreq)
-
-  }
-
-  function polygon(x, y, radius, npoints) {
-    angleMode(RADIANS);
-
-    var angle = TWO_PI / npoints;
-    
-	beginShape();
-	for (var a = 0; a < TWO_PI; a += angle) {
-		var sx = x + cos(a) * radius;
-		var sy = y + sin(a) * radius;
-		vertex(sx, sy);
-	}
-	endShape(CLOSE);
-}
-
-  function drawTriangle() {
-    angleMode(RADIANS);
-    // var rectW = 375; rectH = 375;
-    // var startX = 20 ; startY = 20 + rectH;
-
-    translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    // rotate(angle);
-    // angle = angle + 1;
-    
-    let spectrum = fft.analyze()
-    widthFreq = spectrum[0]
-    level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, rectH);
-
-    pieces = 20;
-
-	for (i = 0; i < pieces; i += 0.1) {
-
-		rotate(TWO_PI / (pieces / 2));
-
-		push();
-        strokeWeight(2)
-        stroke(visualizationColor)
-        fill(visualizationColor)
-        polygon((75 * panLevel), (widthFreq), size, 3)
-		pop();
-	}
-  }
-
-  function randomNumber(min, max) { 
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-} 
-
-  let sides = randomNumber(4, 15);
-
-
-  function drawRandom() {
-    angleMode(RADIANS);
-    // var rectW = 375; rectH = 375;
-    // var startX = 20 ; startY = 20 + rectH;
-
-    translate(startX + (rectW/2), startY + (rectH/2)+ 50); //set the new origin/point of rotation
-    // translate(startX + (rectW/2), startY + (rectH/2)); //set the new origin/point of rotation
-    // rotate(angle);
-    // angle = angle + 1;
-
-    let spectrum = fft.analyze()
-    widthFreq = spectrum[0]
-    level = amplitude.getLevel()
-    let size = map(level, 0, 1, 0, rectH);
-
-    pieces = panLevel + 1;
-
-    for (i = 0; i < pieces; i += .5) {
-
-		rotate(TWO_PI / (pieces/2));
-
-		push();
-        strokeWeight(2)
-        stroke(visualizationColor)
-        noFill()
-        polygon(70 * panLevel, (size), widthFreq * .75, sides)
-		pop();
-	}
-  }
-
 function mousePressed(){
     //create a new curve and append to curveArray
-    if (bounceCircleButtonClicked == true){
-        bar1.drag(mouseX, mouseY);
-        bar2.drag(mouseX, mouseY);
-        //var singleCurve = new curve();
-        //append(curveArray, singleCurve);
+    if (bounceButtonClicked == true){
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+            playBounceAnimation = false;
+            bar1.drag(mouseX, mouseY);
+            bar2.drag(mouseX, mouseY);
+        }
     }
     //create a new curve and reset curve
-    if (drawCurveButtonClicked == true){
+    if (doodleButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
-        if (newCurve.clickedWithinCanvas(curveRectX, curveRectY, curveRectW, curveRectH)){
+        if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
+            playDoodleAnimation = false;
             newCurve.draw();
         }
-
     }
 }
 
 function mouseReleased(){
-    if (bounceCircleButtonClicked == true){
+    if (bounceButtonClicked == true){
         bar1.released();
         bar2.released();
     }
-    if (drawCurveButtonClicked == true){
+    if (doodleButtonClicked == true){
         if (newCurve.drawing){
             newCurve.released();
         }
@@ -545,49 +662,48 @@ function mouseReleased(){
 }
 
 //draw a curve to manipulate sound
-function drawCurve(){
+function doodle(){
     //draw canvas
-
-    curveRectW = 335;
-    curveRectH = 335;   //canvas width & height
-    curveRectX = 20;
-    curveRectY = 20;  //canvas upper left corner   //canvas upper left corner
     rectMode(CORNER);
+    noFill();
+    stroke(255);
+    strokeWeight(2);
+    rect(rectX, rectY, rectW, rectH, 10);
+    //axis
+    line(rectX, rectY+rectH+30, rectX+rectW+30, rectY+rectH+30);
+    line(rectX+rectW+30, rectY+rectH, rectX+rectW+30, rectY);
     fill(255);
+    triangle(rectX, rectY+rectH+30, rectX+10, rectY+rectH+25, rectX+10, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY+rectH+30, rectX+rectW+20, rectY+rectH+25, rectX+rectW+20, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY, rectX+rectW+25, rectY+10, rectX+rectW+35, rectY+10);
+    //axis label
     noStroke();
-    rect(curveRectX, curveRectY, curveRectW, curveRectH);
+    textSize(18);
+    text("pitch", rectX+rectW, rectY-15);
+    text("direction", rectX, rectY+rectH+60);
 
-    if (newCurveExist == true){
-            if (newCurve.drawing) {
-                //as mouse is dragging to draw, add x and y coordinates to list
-                newCurve.saveCoordinates();
-                fill(newCurve.color);
-            } else if (!(newCurve.animating)){
-                fill(newCurve.color);
-            } else {
-                fill("lightgrey");
-            }
-            newCurve.display(curveRectX, curveRectY, curveRectW, curveRectH);
-
-            if (newCurve.animating){
-                newCurve.animate(curveRectX, curveRectY, curveRectW, curveRectH);
-            }
-
-            /*
-            //calculate sum of x and y coordinates in the list
-            for (var i = 0; i <newCurve.xAxis.length ; i++){
-                newCurve.volume += newCurve.xAxis[i];
-                newCurve.freq += newCurve.yAxis[i];
-            }
-            newCurve.freq = map(newCurve.freq, 0, 20000, 20,20000);
-            newCurve.freq = constrain(newCurve.freq,20,20000);
-            filter.freq(newCurve.freq);
-
-             */
-
+    //animation instruction
+    if (playDoodleAnimation){
+        image(doodleAnimation, rectX+5, rectY+5, rectW-10, rectH-10);
     }
 
 
+    if (newCurveExist == true){
+        if (newCurve.drawing) {
+            //as mouse is dragging to draw, add x and y coordinates to list
+            newCurve.saveCoordinates();
+            fill(newCurve.color);
+        } else if (!(newCurve.animating)){
+            fill(newCurve.color);
+        } else {
+            fill("lightgrey");
+        }
+        newCurve.display(rectX, rectY, rectW, rectH);
+
+        if (newCurve.animating){
+            newCurve.animate(rectX, rectY, rectW, rectH);
+        }
+    }
 }
 
 //two bars to bounce off with
@@ -597,6 +713,8 @@ class bar {
         this.y = y;
         this.width = 20;
         this.height = 120;
+        this.mouseStartX = 0;
+        this.mouseStartY = 0;
         this.offsetX = 0;
         this.offsetY = 0;
         this.dragging = false;
@@ -609,7 +727,7 @@ class bar {
             this.x = this.offsetX + px;
             this.y = this.offsetY + py;
         }
-        fill(125);
+        fill(111,78,171);
         noStroke();
         //constrain bar within canvas
         this.x = constrain(this.x, sx, sx+sw-this.width);
@@ -650,6 +768,7 @@ class bar {
         if (d <= ellipseR && testingY == true){
             ellipseDeltaY = -ellipseDeltaY;
         }
+
     }
 
     drag(px, py){
@@ -670,84 +789,89 @@ var bar1 = new bar(0,0);
 var bar2 = new bar(0, 0);
 
 //bounce circle to manipulate sound
-function drawBounceCircle(){
+function bounce(){
     //draw canvas
-    var rectW = 335; rectH = 335;    //canvas width & height
-    var startX = 20; startY = 20;  //canvas upper left corner
     rectMode(CORNER);
-    fill(255);
+    noFill();
     stroke(255);
-    rect(startX, startY, rectW, rectH);
+    strokeWeight(2);
+    rect(rectX, rectY, rectW, rectH, 10);
+    //axis
+    line(rectX, rectY+rectH+30, rectX+rectW+30, rectY+rectH+30);
+    line(rectX+rectW+30, rectY+rectH, rectX+rectW+30, rectY);
+    fill(255);
+    triangle(rectX, rectY+rectH+30, rectX+10, rectY+rectH+25, rectX+10, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY+rectH+30, rectX+rectW+20, rectY+rectH+25, rectX+rectW+20, rectY+rectH+35);
+    triangle(rectX+rectW+30, rectY, rectX+rectW+25, rectY+10, rectX+rectW+35, rectY+10);
+    //axis label
+    noStroke();
+    textSize(18);
+    text("pitch", rectX+rectW, rectY-15);
+    text("direction", rectX, rectY+rectH+60);
 
     //draw bar
     if (bar1.haveBeenDragged == false){
-        bar1.x = startX + 50;
-        bar1.y = startY + 50;
+        bar1.x = rectX + 50;
+        bar1.y = rectY + 50;
     }
     if (bar2.haveBeenDragged == false){
-        bar2.x = startX + rectW - bar2.width - 50;
-        bar2.y = startY + rectH - bar2.height - 50;
+        bar2.x = rectX + rectW - bar2.width - 50;
+        bar2.y = rectY + rectH - bar2.height - 50;
     }
-    bar1.display(mouseX, mouseY, startX, startY, rectW, rectH);
-    bar2.display(mouseX, mouseY, startX, startY, rectW, rectH);
+    bar1.display(mouseX, mouseY, rectX, rectY, rectW, rectH);
+    bar2.display(mouseX, mouseY, rectX, rectY, rectW, rectH);
     bar1.bounce();
     bar2.bounce();
 
+    //draw animation
+    if (playBounceAnimation){
+        image(bounceAnimation, bar1.x+bar1.width, bar1.y+bar1.height/3, bounceAnimation.width/6, bounceAnimation.height/6);
+        push();
+        scale(-1.0, 1.0);
+        image(bounceAnimation, -bar2.x,bar2.y+bar2.height/3,bounceAnimation.width/6, bounceAnimation.height/6);
+        pop();
+    }
+
     //draw circle
-    fill(0);
-    stroke(0);
+    fill(255);
+    stroke(255);
     ellipse(ellipseX,ellipseY,ellipseR*2);
 
     //circle bounce off boundary
     ellipseX += ellipseDeltaX;
     ellipseY += ellipseDeltaY;
 
-    if (ellipseX > startX + rectW - ellipseR){
+    if (ellipseX > rectX + rectW - ellipseR){
         ellipseDeltaX = -ellipseDeltaX;
-    } else if (ellipseX < startX + ellipseR){
+    } else if (ellipseX < rectX + ellipseR){
         ellipseDeltaX = -ellipseDeltaX;
     }
 
-    if (ellipseY > startY + rectH - ellipseR){
+    if (ellipseY > rectY + rectH - ellipseR){
         ellipseDeltaY = -ellipseDeltaY;
-    } else if (ellipseY < startY + ellipseR){
+    } else if (ellipseY < rectY + ellipseR){
         ellipseDeltaY = -ellipseDeltaY;
     }
     //change direction
-    var dir = map(ellipseX, startX, startX+rectW, -1.0,1.0);
+    var dir = map(ellipseX, rectX, rectX+rectW, -1.0,1.0);
     panLevel = dir;
     sound.pan(dir);
 
     //change frequency
-    var freq = map (ellipseY, startY, startY + rectH, 20,20000);
+    var freq = map (ellipseY, rectY, rectY + rectH, 20,20000);
     freq = constrain(freq,20,20000);
     filter.freq(freq);
 
-    /*
-    //draw curve
-    if (mouseIsPressed === true) {
-        //as mouse is dragging to draw, add x and y coordinates to array
-        curveArray[curveArray.length-1].saveCoordinates();
-    }
-    stroke(0);
-    strokeWeight(3);
-    for (var i = 0; i < curveArray.length; i++){
-        curveArray[i].display();
-        curveArray[i].bounce();
-        let dryWet = constrain(map(ellipseX, startX, startX+rectW, 0, 1), 0, 1);
-        reverb.drywet(dryWet);
-    }
- */
 
 }
 
 //use slider to manipulate sound
-function drawSliders(){
+function slider(){
     //draw sliders
     stroke(255);
-    drawDirection();
-    drawFrequency();
-    drawReverb();
+    drawSlider(panX, panY, "Direction", 30);
+    drawSlider(frequencyX, frequencyY, "Pitch", 50);
+    drawSlider(reverbX, reverbY, "Reverb", 40);
 
     //drag slider action
     if (mouseIsPressed) {
@@ -755,64 +879,39 @@ function drawSliders(){
         changeFrequency();
         changeReverb();
     }
-    //visualize
-    // visualizeSliders();
 }
 
-//draw visualization corresponding to slider values
-function visualizeSliders(){
-    drawVisualization1();
-    drawVisualization2(frequencyX, reverbX);
-}
-
-//draw direction slider
-function drawDirection(){
-    //direction text
+//draw SINGLE slider
+function drawSlider(parameterX, parameterY, labelText, labelOffset){
+    rectMode(CORNER);
+    noFill();
+    stroke(255);
+    strokeWeight(1);
+    rect(rectX, parameterY, rectW, sliderHeight, 40);
+    //text label background
+    rect(rectX+rectW-sliderBreak, parameterY, sliderBreak, sliderHeight, 0, 40, 40, 0)
+    //text label
     textSize(22);
-    textStyle(ITALIC);
+    textStyle(NORMAL);
+    textFont(font);
     strokeWeight(0);
     fill(255);
-    text("Direction", sliderStart, panY - 40);
-
-    //direction slider
+    text(labelText, rectX+rectW-sliderBreak+labelOffset, parameterY+sliderHeight/2+10);
+    //slider
     strokeWeight(5);
-    line(sliderStart, panY, sliderStop, panY);
-    ellipse(panX, panY, sliderBallRadius*2);
-}
-
-//draw frequency slider
-function drawFrequency(){
-    //frequency text
-    textSize(22);
-    textStyle(ITALIC);
-    strokeWeight(0);
-    fill(255);
-    text("Pitch", sliderStart, frequencyY - 40);
-
-    //frequency slider
-    strokeWeight(5);
-    line(sliderStart, frequencyY, sliderStop, frequencyY);
-    ellipse(frequencyX, frequencyY, sliderBallRadius*2);
-}
-
-//draw reverb slider
-function drawReverb(){
-    //reverb text
-    textSize(22);
-    textStyle(ITALIC);
-    strokeWeight(0);
-    fill(255);
-    text("Reverb", sliderStart, reverbY - 40);
-
-    //reverb slider
-    strokeWeight(5);
-    line(sliderStart, reverbY, sliderStop, reverbY);
-    ellipse(reverbX, reverbY, sliderBallRadius*2);
+    stroke(255);
+    line(sliderStart, parameterY+sliderHeight/2, sliderStop, parameterY+sliderHeight/2);
+    stroke(176, 154, 217);
+    line(sliderStart, parameterY+sliderHeight/2, parameterX, parameterY+sliderHeight/2);
+    //ball on slider
+    noStroke();
+    fill(111,78,171);
+    ellipse(parameterX, parameterY+sliderHeight/2, sliderBallRadius*2);
 }
 
 //audio direction changes as direction slider changes
 function changeDirection(){
-    if (mouseY > (panY - sliderBallRadius) && mouseY < (panY + sliderBallRadius)) {
+    if (mouseY > (panY+sliderHeight/2 - sliderBallRadius) && mouseY < (panY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         panX = constrain(mouseX, sliderStart, sliderStop);
         var dir = map(panX, sliderStart, sliderStop, -1.0,1.0);
         panLevel = dir;
@@ -822,7 +921,7 @@ function changeDirection(){
 
 //frequency changes as frequency slider changes
 function changeFrequency(){
-    if (mouseY > (frequencyY - sliderBallRadius) && mouseY < (frequencyY + sliderBallRadius)) {
+    if (mouseY > (frequencyY+sliderHeight/2 - sliderBallRadius) && mouseY < (frequencyY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         frequencyX = constrain(mouseX, sliderStart, sliderStop);
         let level = map(frequencyX, sliderStart, sliderStop, 20,20000);
         filter.freq(level);
@@ -833,7 +932,7 @@ function changeFrequency(){
 
 //reverb changes as reverb slider changes
 function changeReverb(){
-    if (mouseY > (reverbY - sliderBallRadius) && mouseY < (reverbY + sliderBallRadius)) {
+    if (mouseY > (reverbY+sliderHeight/2 - sliderBallRadius) && mouseY < (reverbY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         reverbX = constrain(mouseX, sliderStart, sliderStop);
         let dryWet = constrain(map(reverbX, sliderStart, sliderStop, 0, 1), 0, 1);
         reverb.drywet(dryWet);
@@ -846,7 +945,7 @@ function toggleSound() {
         //stop sound
         sound.stop();
         //bounce circle - stop circle
-        if (bounceCircleButtonClicked == true){
+        if (bounceButtonClicked == true){
             ellipseDeltaX = 0;
             ellipseDeltaY = 0;
         }
@@ -855,9 +954,9 @@ function toggleSound() {
         sound.play();
         sound.loop();
         //bounce circle - move circle with a random direction & velocity
-        if (bounceCircleButtonClicked == true){
+        if (bounceButtonClicked == true){
             ellipseDeltaX = random(-5, 5);
             ellipseDeltaY = random(-5, 5);
         }
     }
- }
+}
