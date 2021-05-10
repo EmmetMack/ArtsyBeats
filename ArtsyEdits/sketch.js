@@ -145,8 +145,31 @@ function windowResize() {
 
 function setVisualizationPosition() {
     if (displayWidth < 500) {
-        rectX = 0;
-        rectY = 20 + rectH;
+
+        // rectX = 0;
+        // rectY = 20 + rectH;
+
+        var canvasRatio = 0.75;
+        rectX = 20;
+        rectY = 30;
+
+        rectW = displayWidth - 80; 
+        rectH = 375;
+
+        //ball of bounce
+        ellipseX = rectX + rectW/2;
+        ellipseY = rectY + rectH/2;
+        //canvas of visualization
+        vizX = 0;
+        vizY = 440;
+        //canvas of slider
+        sliderStart = rectX + 30;
+        sliderStop = rectX + rectW - sliderBreak - 30;
+        panX = sliderStart;
+        frequencyX = sliderStart;
+        reverbX = sliderStart;
+
+
     } else {
         //canvas of bounce&doodle
         var canvasRatio = 0.62;
@@ -172,7 +195,12 @@ window.addEventListener('resize', windowResize);
 
 function setup() {
     angleMode(DEGREES);
-    var myCanvas = createCanvas(displayWidth, 500);
+    if (displayWidth < 1024) {
+        var myCanvas = createCanvas(displayWidth, 850);
+    } else {
+        var myCanvas = createCanvas(displayWidth, 500);
+
+    }
     myCanvas.parent("p5");
     amplitude = new p5.Amplitude();
     fft = new p5.FFT();
