@@ -297,7 +297,7 @@ function clickedWithinCanvas(sx, sy, sw, sh){
 
 //click to change color of visualization button border
 function changeBorderColor(clickedId){
-    for (var i = 0; i < 4; i++){
+    for (var i = 0; i < 5; i++){
         document.querySelectorAll(".visualizationButtons img")[i].style.border="2px solid #FFFFFF";
     }
     document.getElementById(clickedId).style.border="3px solid #6F4EAB";
@@ -575,10 +575,10 @@ function drawVisualization1() {
 
 //math equations to draw one visualization
 function drawVisualization2(parameter1, parameter2){
-    angleMode(DEGREES)
+    angleMode(DEGREES);
     //Epicycloid Involute
     beginShape();
-    stroke(visualizationColor)
+    stroke(visualizationColor);
     strokeWeight(0.5);
     noFill();
     for (var i = 0; i < parameter1; i ++){ //mouseX controls number of curves
