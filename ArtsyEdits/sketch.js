@@ -32,13 +32,13 @@ var visualizationColor;
 //angle for rotating the shape
 var angle = 0;
 
-//BounceCircle variables
+//bounce variables
 var ellipseR = 25;
 var ellipseX, ellipseY;
 //initiate ellipse velocity with a random value
 var ellipseDeltaX = Math.floor(Math.random() * (5 - (-5)) + (-5)); ellipseDeltaY = Math.floor(Math.random() * (5 - (-5)) + (-5));
 
-//drawCurve variables
+//doodle variables
 var newCurve;
 var newCurveExist = false;
 class curve {
@@ -111,8 +111,8 @@ class curve {
 
 //determine manipulation method
 var sliderButtonClicked = true;
-var bounceCircleButtonClicked = false;
-var drawCurveButtonClicked = false;
+var bounceButtonClicked = false;
+var doodleButtonClicked = false;
 
 //initial animation as instruction
 var doodleAnimation, bounceAnimation;
@@ -185,6 +185,8 @@ function setup() {
     document.getElementById('sliderIcon').style.filter = "invert(100%)";
     document.getElementById('sliderButton').style.backgroundColor = 'white';
     document.getElementById('sliderButton').style.color = 'black';
+    //initially, drawRect is selected
+    document.getElementById('rectangleButton').style.border="3px solid #6F4EAB";
 }
 
 function draw() {
@@ -197,22 +199,22 @@ function draw() {
     //switch manipulation method to slider
     document.getElementById('sliderButton').onclick = function() {
         sliderButtonClicked = true;
-        bounceCircleButtonClicked = false;
-        drawCurveButtonClicked = false;
+        bounceButtonClicked = false;
+        doodleButtonClicked = false;
         changeIconColor('sliderIcon','bounceIcon','doodleIcon', 'sliderButton', 'bounceButton', 'doodleButton');
     }
     //switch manipulation method to bounce circle
     document.getElementById('bounceButton').onclick = function() {
         sliderButtonClicked = false;
-        bounceCircleButtonClicked = true;
-        drawCurveButtonClicked = false;
+        bounceButtonClicked = true;
+        doodleButtonClicked = false;
         changeIconColor('bounceIcon','sliderIcon','doodleIcon','bounceButton', 'sliderButton', 'doodleButton');
     }
     //switch manipulation method to draw curve
     document.getElementById('doodleButton').onclick = function() {
         sliderButtonClicked = false;
-        bounceCircleButtonClicked = false;
-        drawCurveButtonClicked = true;
+        bounceButtonClicked = false;
+        doodleButtonClicked = true;
         changeIconColor('doodleIcon','bounceIcon','sliderIcon', 'doodleButton', 'bounceButton', 'sliderButton');
     }
 
@@ -267,12 +269,12 @@ function draw() {
 
 
     if (sliderButtonClicked == true){
-        drawSliders();
+        slider();
         sound.rate(1);
-    } else if (bounceCircleButtonClicked == true){
-        drawBounceCircle();
-    } else if (drawCurveButtonClicked == true){
-        drawCurve();
+    } else if (bounceButtonClicked == true){
+        bounce();
+    } else if (doodleButtonClicked == true){
+        doodle();
     }
 
     if (drawRectClicked == true) {
@@ -329,7 +331,7 @@ function sliderButtonHover() {
 }
 
 function bounceButtonHover() {
-    if (!bounceCircleButtonClicked) {
+    if (!bounceButtonClicked) {
         document.getElementById('bounceIcon').style.filter = "invert(100%)";
         document.getElementById('bounceButton').style.backgroundColor = 'white';
         document.getElementById('bounceButton').style.color = 'black';
@@ -337,7 +339,7 @@ function bounceButtonHover() {
 }
 
 function doodleButtonHover() {
-    if (!drawCurveButtonClicked) {
+    if (!doodleButtonClicked) {
         document.getElementById('doodleIcon').style.filter = "invert(100%)";
         document.getElementById('doodleButton').style.backgroundColor = 'white';
         document.getElementById('doodleButton').style.color = 'black';
@@ -353,7 +355,7 @@ function sliderButtonUnhover() {
 }
 
 function bounceButtonUnhover() {
-    if (!bounceCircleButtonClicked) {
+    if (!bounceButtonClicked) {
         document.getElementById('bounceIcon').style.filter = "invert(0%)";
         document.getElementById('bounceButton').style.backgroundColor = 'black';
         document.getElementById('bounceButton').style.color = 'white';
@@ -361,7 +363,7 @@ function bounceButtonUnhover() {
 }
 
 function doodleButtonUnhover() {
-    if (!drawCurveButtonClicked) {
+    if (!doodleButtonClicked) {
         document.getElementById('doodleIcon').style.filter = "invert(0%)";
         document.getElementById('doodleButton').style.backgroundColor = 'black';
         document.getElementById('doodleButton').style.color = 'white';
@@ -600,7 +602,7 @@ function drawVisualization2(parameter1, parameter2){
 
 function mousePressed(){
     //create a new curve and append to curveArray
-    if (bounceCircleButtonClicked == true){
+    if (bounceButtonClicked == true){
         if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
             playBounceAnimation = false;
             bar1.drag(mouseX, mouseY);
@@ -608,7 +610,7 @@ function mousePressed(){
         }
     }
     //create a new curve and reset curve
-    if (drawCurveButtonClicked == true){
+    if (doodleButtonClicked == true){
         newCurve = new curve();
         newCurveExist = true;
         if (clickedWithinCanvas(rectX, rectY, rectW, rectH)){
@@ -619,11 +621,11 @@ function mousePressed(){
 }
 
 function mouseReleased(){
-    if (bounceCircleButtonClicked == true){
+    if (bounceButtonClicked == true){
         bar1.released();
         bar2.released();
     }
-    if (drawCurveButtonClicked == true){
+    if (doodleButtonClicked == true){
         if (newCurve.drawing){
             newCurve.released();
         }
@@ -631,7 +633,7 @@ function mouseReleased(){
 }
 
 //draw a curve to manipulate sound
-function drawCurve(){
+function doodle(){
     //draw canvas
     rectMode(CORNER);
     noFill();
@@ -759,7 +761,7 @@ var bar1 = new bar(0,0);
 var bar2 = new bar(0, 0);
 
 //bounce circle to manipulate sound
-function drawBounceCircle(){
+function bounce(){
     //draw canvas
     rectMode(CORNER);
     noFill();
@@ -836,7 +838,7 @@ function drawBounceCircle(){
 }
 
 //use slider to manipulate sound
-function drawSliders(){
+function slider(){
     //draw sliders
     stroke(255);
     drawSlider(panX, panY, "Direction", 30);
@@ -881,7 +883,7 @@ function drawSlider(parameterX, parameterY, labelText, labelOffset){
 
 //audio direction changes as direction slider changes
 function changeDirection(){
-    if (mouseY > (panY+sliderHeight/2 - sliderBallRadius) && mouseY < (panY+sliderHeight/2 + sliderBallRadius)) {
+    if (mouseY > (panY+sliderHeight/2 - sliderBallRadius) && mouseY < (panY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         panX = constrain(mouseX, sliderStart, sliderStop);
         var dir = map(panX, sliderStart, sliderStop, -1.0,1.0);
         panLevel = dir;
@@ -891,7 +893,7 @@ function changeDirection(){
 
 //frequency changes as frequency slider changes
 function changeFrequency(){
-    if (mouseY > (frequencyY+sliderHeight/2 - sliderBallRadius) && mouseY < (frequencyY+sliderHeight/2 + sliderBallRadius)) {
+    if (mouseY > (frequencyY+sliderHeight/2 - sliderBallRadius) && mouseY < (frequencyY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         frequencyX = constrain(mouseX, sliderStart, sliderStop);
         let level = map(frequencyX, sliderStart, sliderStop, 20,20000);
         filter.freq(level);
@@ -902,7 +904,7 @@ function changeFrequency(){
 
 //reverb changes as reverb slider changes
 function changeReverb(){
-    if (mouseY > (reverbY+sliderHeight/2 - sliderBallRadius) && mouseY < (reverbY+sliderHeight/2 + sliderBallRadius)) {
+    if (mouseY > (reverbY+sliderHeight/2 - sliderBallRadius) && mouseY < (reverbY+sliderHeight/2 + sliderBallRadius) && mouseX > sliderStart && mouseX < sliderStop) {
         reverbX = constrain(mouseX, sliderStart, sliderStop);
         let dryWet = constrain(map(reverbX, sliderStart, sliderStop, 0, 1), 0, 1);
         reverb.drywet(dryWet);
@@ -915,7 +917,7 @@ function toggleSound() {
         //stop sound
         sound.stop();
         //bounce circle - stop circle
-        if (bounceCircleButtonClicked == true){
+        if (bounceButtonClicked == true){
             ellipseDeltaX = 0;
             ellipseDeltaY = 0;
         }
@@ -924,7 +926,7 @@ function toggleSound() {
         sound.play();
         sound.loop();
         //bounce circle - move circle with a random direction & velocity
-        if (bounceCircleButtonClicked == true){
+        if (bounceButtonClicked == true){
             ellipseDeltaX = random(-5, 5);
             ellipseDeltaY = random(-5, 5);
         }
