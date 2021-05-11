@@ -1,7 +1,7 @@
 var sound, amplitude, frequency, fft, font;
 
 //slider variables
-var sliderStart = 0; sliderStop = 0; //maybe set this to a default size that fits mobile but then also doesn't look bad on bigger screens
+var sliderStart = 0; sliderStop = 0; 
 //ball on the slider
 var sliderHeight = 50; sliderBreak = 150;
 var panX = 20, panY = 75;
@@ -9,12 +9,8 @@ var frequencyX = 20, frequencyY = 175;
 var reverbX = 20, reverbY = 275;
 var sliderBallRadius = 12;
 
-//TO-DO:
-// set global rectW and rectH for visualizations and start x and y based on the screen size - UPDATE seems to work
-// change style, add in visualization images as the buttons for them
-// add faux submit button, maybe a screen that pops up saying submitted - easy change, think added
 var rectX = 20;
-var rectY = 20; //= 20 20 + rectH
+var rectY = 20;
 var rectW = 550;
 var rectH = 375;
 
@@ -144,7 +140,7 @@ function windowResize() {
 }
 
 function setVisualizationPosition() {
-    if (displayWidth < 500) {
+    if (displayWidth < 800) {
 
         // rectX = 0;
         // rectY = 20 + rectH;
@@ -887,16 +883,16 @@ function drawSlider(parameterX, parameterY, labelText, labelOffset){
     noFill();
     stroke(255);
     strokeWeight(1);
-    rect(rectX, parameterY, rectW, sliderHeight, 40);
+    rect(rectX - 10, parameterY, rectW, sliderHeight, 40);
     //text label background
-    rect(rectX+rectW-sliderBreak, parameterY, sliderBreak, sliderHeight, 0, 40, 40, 0)
+    rect(rectX+rectW-sliderBreak - 10, parameterY, sliderBreak, sliderHeight, 0, 40, 40, 0)
     //text label
     textSize(22);
     textStyle(NORMAL);
     textFont(font);
     strokeWeight(0);
     fill(255);
-    text(labelText, rectX+rectW-sliderBreak+labelOffset, parameterY+sliderHeight/2+10);
+    text(labelText, rectX+rectW-sliderBreak+labelOffset - 10, parameterY+sliderHeight/2+10);
     //slider
     strokeWeight(5);
     stroke(255);
