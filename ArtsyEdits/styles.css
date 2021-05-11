@@ -45,8 +45,8 @@ hr{
 #visualizationBox, #manipulationBox{
     vertical-align: top;
     display: inline-block;
-    width: 40%;
-    margin-left: 7%;
+    width: 45%;
+    margin-left: 3%;
 }
 
 .vl {
@@ -175,8 +175,8 @@ i{
     #visualizationBox, #manipulationBox{
         vertical-align: top;
         display: inline-block;
-        width: 40%;
-        margin-left: 7%;
+        width: 45%;
+        margin-left: 1%;
     }
 
     .manipulationButtons button:not(:last-child){
@@ -196,8 +196,8 @@ i{
     #visualizationBox, #manipulationBox{
         vertical-align: top;
         display: inline-block;
-        width: 40%;
-        margin-left: 7%;
+        width: 45%;
+        margin-left: 1%;
     }
 
     .manipulationButtons button:not(:last-child){
@@ -217,8 +217,8 @@ i{
     #visualizationBox, #manipulationBox{
         vertical-align: top;
         display: inline-block;
-        width: 40%;
-        margin-left: 7%;
+        width: 45%;
+        margin-left: 1%;
     }
 
     .manipulationButtons button:not(:last-child){

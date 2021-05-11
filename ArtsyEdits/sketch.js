@@ -11,7 +11,7 @@ var sliderBallRadius = 12;
 
 var rectX = 20;
 var rectY = 20;
-var rectW = 550;
+var rectW = 500;
 var rectH = 375;
 
 var vizX = 0;
@@ -140,7 +140,7 @@ function windowResize() {
 }
 
 function setVisualizationPosition() {
-    if (displayWidth < 800) {
+    if (displayWidth < 1024) {
 
         // rectX = 0;
         // rectY = 20 + rectH;
@@ -168,7 +168,7 @@ function setVisualizationPosition() {
 
     } else {
         //canvas of bounce&doodle
-        var canvasRatio = 0.62;
+        var canvasRatio = 0.50;
         rectX = displayWidth * canvasRatio;
         rectY = 30;
         //ball of bounce
@@ -178,7 +178,7 @@ function setVisualizationPosition() {
         vizX = displayWidth/8;
         vizY = 30;
         //canvas of slider
-        sliderStart = rectX + 30;
+        sliderStart = rectX + 10;
         sliderStop = rectX + rectW - sliderBreak - 30;
         panX = sliderStart;
         frequencyX = sliderStart;
